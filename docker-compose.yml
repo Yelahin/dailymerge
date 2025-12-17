@@ -1,0 +1,15 @@
+services:
+  django:
+    container_name: django
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 8080:8000
+    env_file:
+      - .env
+
+  redis:
+    container_name: redis
+    image: redis:latest
