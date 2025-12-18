@@ -15,7 +15,8 @@ def normalize_data(url):
             'title': raw_data.title,
             'link': raw_data.link,
             'published': raw_data.published,
-            'summary': raw_data.summary
+            'summary': raw_data.summary,
+            'image_url': raw_data.media_thumbnail[0]['url'],
         }
     return result
 
