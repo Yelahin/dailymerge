@@ -115,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Paris"
 
 USE_I18N = True
 
@@ -131,8 +131,3 @@ STATIC_URL = 'static/'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-
-#Time zone
-
-USE_TZ = True
-TIME_ZONE = "Europe/Paris"
