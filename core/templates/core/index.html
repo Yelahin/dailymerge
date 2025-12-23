@@ -1,33 +1,13 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Breaking news!">
-</head>
-
-<body>
-    <nav>
-        <div>
-            {% for page in menu %}
-                <a href="{% url page %}">{{ page }}</a>
-            {% endfor %}
-        </div>
-    </nav>
-    <main>
-        {% for article in articles %}
-            <a href="{{ article.link }}">
-                <div>
-                    <img src="{{ article.image_url }}" alt="article image">
-                    <strong>{{ article.title }}</strong>
-                    <p>{{ article.summary }}</p>
-                </div>
-            </a>
-        {% endfor %}
-    </main>
-    <footer>
-    </footer>
-</body>
-
-</html>
+{% extends "basic.html" %}
+{% load static %}
+{% block content %}
+    {% for article in articles %}
+        <a href="{{ article.link }}">
+            <div>
+                <img src="{{ article.image_url }}" alt="article image">
+                <strong>{{ article.title }}</strong>
+                <p>{{ article.summary }}</p>
+            </div>
+        </a>
+    {% endfor %}
+{% endblock %}
