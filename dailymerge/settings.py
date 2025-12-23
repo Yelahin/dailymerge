@@ -36,6 +36,7 @@ ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    'django_celery_beat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -131,3 +132,6 @@ STATIC_URL = 'static/'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+#Celery beat settings
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

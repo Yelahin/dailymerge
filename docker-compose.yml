@@ -16,7 +16,17 @@ services:
   worker:
     container_name: worker
     build: .
-    command: celery --app=dailymerge worker -l INFO
+    command: celery -A dailymerge worker -l INFO
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - redis
+      - postgres
+
+  celery_beat:
+    container_name: celery_beat
+    build: .
+    command: celery -A dailymerge beat -l INFO
     volumes:
       - ./:/usr/src/app
     depends_on:

@@ -11,7 +11,7 @@ attributes = ['title', 'link', 'published', 'summary', 'image_url']
 @shared_task
 def remove_data():
     for article in ArticleModel.objects.all():
-        if article.published <= timezone.now() - datetime.timedelta(days=3):
+        if article.published <= timezone.now() - datetime.timedelta(days=1):
             article.delete()
 
 #upload data to db
