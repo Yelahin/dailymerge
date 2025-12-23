@@ -7,11 +7,13 @@ import datetime
 
 attributes = ['title', 'link', 'published', 'summary', 'image_url']
 
+published_condition=1
+
 #remove data from db
 @shared_task
 def remove_data():
     for article in ArticleModel.objects.all():
-        if article.published <= timezone.now() - datetime.timedelta(days=1):
+        if article.published <= timezone.now() - datetime.timedelta(days=published_condition):
             article.delete()
 
 #upload data to db
@@ -26,9 +28,11 @@ def upload_data(url):
             for attribute in attributes:
                 all_params[attribute] = article_data[attribute]
 
-            #check if this article already exists
+            
+            #check if this article already exists and check if article is fresh
             existing_links = [article.link for article in ArticleModel.objects.all()]
-            if all_params['link'] not in existing_links:
+            if all_params['link'] not in existing_links and \
+            all_params['published'] >= timezone.now() - datetime.timedelta(days=published_condition):
                 ArticleModel.objects.create(**all_params)
 
 #normalize raw data
