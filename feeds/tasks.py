@@ -2,8 +2,17 @@ from celery import shared_task
 from .models import ArticleModel
 import feedparser
 import dateparser
+from django.utils import timezone
+import datetime
 
 attributes = ['title', 'link', 'published', 'summary', 'image_url']
+
+#remove data from db
+@shared_task
+def remove_data():
+    for article in ArticleModel.objects.all():
+        if article.published <= timezone.now() - datetime.timedelta(days=3):
+            article.delete()
 
 #upload data to db
 @shared_task
