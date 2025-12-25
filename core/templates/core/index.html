@@ -1,13 +1,14 @@
 {% extends "basic.html" %}
-{% load static %}
 {% block content %}
     {% for article in articles %}
-        <a href="{{ article.link }}">
-            <div>
-                <img src="{{ article.image_url }}" alt="article image">
-                <strong>{{ article.title }}</strong>
-                <p>{{ article.summary }}</p>
-            </div>
-        </a>
+        <div class="news-item">
+            <a href="{{ article.link }}">
+                <div>
+                    <img src="{{ article.image_url }}" alt="article image">
+                    <strong>{{ article.title }}</strong>
+                    <p>{{ article.summary }}</p>
+                </div>
+            </a>
+        </div>
     {% endfor %}
 {% endblock %}
