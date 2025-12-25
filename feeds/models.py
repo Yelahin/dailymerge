@@ -7,7 +7,7 @@ class ArticleModel(models.Model):
     link = models.URLField(unique=True)
     published = models.DateTimeField()
     summary = models.TextField()
-    image_url = models.URLField()
+    image_url = models.URLField(max_length=500)
 
     def __str__(self):
         return self.title

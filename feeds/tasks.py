@@ -19,7 +19,7 @@ def remove_data():
 #upload data to db
 @shared_task
 def upload_data(urls_list):
-    normalized_data = get_entries_attributes(urls_list)
+    normalized_data = get_normalized_data(urls_list)
     #go through each article
     for article_data in normalized_data:
         #check if any attribute equals None
@@ -45,6 +45,7 @@ def get_normalized_data(urls_list) -> list:
         
 #return list of get_entry_attributes
 def get_entries_attributes(entries) -> list:
+    """Normalize a list of RSS feed entries into dicts."""
     entries_attributes_list = []
     for entry in entries:
         attributes_dict = get_entry_attributes(entry)
@@ -59,19 +60,26 @@ def get_entry_attributes(entry) -> dict:
         if attribute == 'image_url':
             attributes_dict[attribute] = get_image_url_from_entry(entry)
         elif attribute == 'published':
-            attributes_dict[attribute] = dateparser.parse(entry[attribute])
+            attributes_dict[attribute] = get_published_from_entry(entry)
         else:
-            attributes_dict[attribute] = entry[attribute]    
+            attributes_dict[attribute] = entry.get(attribute)    
     return attributes_dict
 
 #return image url
-def get_image_url_from_entry(entry) -> str:
+def get_image_url_from_entry(entry) -> str | None:
     """This function get and return image_url from entry"""
     if "media_thumbnail" in entry:
-        image_url = entry.media_thumbnail[0]['url']
+        return entry.media_thumbnail[0].get('url')
     elif "media_content" in entry:
-        image_url = entry.media_content[0]['url']
-    return image_url
+        return entry.media_content[0].get('url')
+    return None
+
+#return published date
+def get_published_from_entry(entry) -> datetime.datetime | None:
+    published = entry.get('published')
+    #use if statement to prevent error of dateparser.parse(None)
+    return dateparser.parse(published) if published else None
+
 
 #fetch raw data from rss feeds
 def fetch_rss_entry(url) -> list:

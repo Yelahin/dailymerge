@@ -11,6 +11,7 @@ app.conf.beat_schedule = {
         "task": "feeds.tasks.upload_data",
         "schedule": 5,
         "args": (["https://feeds.bbci.co.uk/news/world/rss.xml",
+                  "https://feeds.bbci.co.uk/news/rss.xml",
                   "https://rss.app/feeds/twV4dtLhEH4l9cRG.xml"],)
     },
     "remove-data": {
