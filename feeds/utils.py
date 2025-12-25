@@ -2,6 +2,7 @@ import feedparser
 import dateparser
 import datetime
 from bs4 import BeautifulSoup
+import re
 
 ATTRIBUTE_PROCESSORS = {
     'title': lambda entry: entry.get('title'),
@@ -38,11 +39,8 @@ def get_entry_attributes(entry) -> dict:
 def get_summary_from_entry(entry) -> str | None:
     summary = entry.get('summary')
     if summary:
-        if "div" in summary:
-            soup = BeautifulSoup(summary, 'html.parser')
-            inner_div = soup.find_all("div")[1]
-            return inner_div.get_text(strip=True)
-        return summary
+        soup = BeautifulSoup(summary, 'html.parser')
+        return soup.get_text()
     return None
 
 #return image url

@@ -14,6 +14,7 @@ app.conf.beat_schedule = {
             [
                 "https://feeds.bbci.co.uk/news/world/rss.xml", #world news
                 "https://feeds.bbci.co.uk/news/rss.xml", #world news
+                "https://www.theguardian.com/world/rss", #world news
                 "https://rss.app/feeds/twV4dtLhEH4l9cRG.xml", #ufc news
             ], 
         )
