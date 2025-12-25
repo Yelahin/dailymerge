@@ -18,8 +18,8 @@ def remove_data():
 
 #upload data to db
 @shared_task
-def upload_data(url):
-    normalized_data = normalize_data(url)
+def upload_data(urls_list):
+    normalized_data = get_entries_attributes(urls_list)
     #go through each article
     for article_data in normalized_data:
         #check if any attribute equals None
@@ -35,29 +35,46 @@ def upload_data(url):
             all_params['published'] >= timezone.now() - datetime.timedelta(days=published_condition):
                 ArticleModel.objects.create(**all_params)
 
-#normalize raw data
-def normalize_data(url) -> list:
-    raw_data_collection = fetch_rss_entry(url)
+#return normalized data from feeds
+def get_normalized_data(urls_list) -> list:
     result = []
-    #go through each article
-    for raw_data in raw_data_collection:
-        article_data = {}
-        #go through each attribute
-        for attribute in attributes:
-            #feedparser don't use "image_url" tag - instead it use "media_thumbnail"
-            if attribute == 'image_url':
-                article_data[attribute] = raw_data.media_thumbnail[0]['url']
-            #transform published time format - to pass DateTimeField in .models
-            elif attribute == 'published':
-                article_data[attribute] = dateparser.parse(raw_data[attribute])
-            else:
-                article_data[attribute] = raw_data[attribute]
-        #add article to result
-        result.append(article_data)
+    for url in urls_list:
+        entries = fetch_rss_entry(url)
+        result += get_entries_attributes(entries)
     return result
+        
+#return list of get_entry_attributes
+def get_entries_attributes(entries) -> list:
+    entries_attributes_list = []
+    for entry in entries:
+        attributes_dict = get_entry_attributes(entry)
+        entries_attributes_list.append(attributes_dict)
+    return entries_attributes_list
+
+#return entry attributes
+def get_entry_attributes(entry) -> dict:
+    """Go through entry and add attributes in dict."""
+    attributes_dict = {}
+    for attribute in attributes:
+        if attribute == 'image_url':
+            attributes_dict[attribute] = get_image_url_from_entry(entry)
+        elif attribute == 'published':
+            attributes_dict[attribute] = dateparser.parse(entry[attribute])
+        else:
+            attributes_dict[attribute] = entry[attribute]    
+    return attributes_dict
+
+#return image url
+def get_image_url_from_entry(entry) -> str:
+    """This function get and return image_url from entry"""
+    if "media_thumbnail" in entry:
+        image_url = entry.media_thumbnail[0]['url']
+    elif "media_content" in entry:
+        image_url = entry.media_content[0]['url']
+    return image_url
 
 #fetch raw data from rss feeds
-def fetch_rss_entry(url):
+def fetch_rss_entry(url) -> list:
     raw_data = feedparser.parse(url)
     entries = raw_data.entries
     return entries

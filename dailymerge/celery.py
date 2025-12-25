@@ -9,8 +9,9 @@ app = Celery('dailymerge')
 app.conf.beat_schedule = {
     "upload-data": {
         "task": "feeds.tasks.upload_data",
-        "schedule": crontab(minute="*"),
-        "args": ("https://feeds.bbci.co.uk/news/world/rss.xml",)
+        "schedule": 5,
+        "args": (["https://feeds.bbci.co.uk/news/world/rss.xml",
+                  "https://rss.app/feeds/twV4dtLhEH4l9cRG.xml"],)
     },
     "remove-data": {
         "task": "feeds.tasks.remove_data",
