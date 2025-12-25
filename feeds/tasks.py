@@ -4,15 +4,15 @@ from django.utils import timezone
 import datetime
 from .utils import get_normalized_data
 
-attributes = ['title', 'link', 'published', 'summary', 'image_url']
-
 published_condition=1
+
+expiring_data = timezone.now() - datetime.timedelta(days=published_condition)
 
 #remove data from db
 @shared_task
 def remove_data():
     for article in ArticleModel.objects.all():
-        if article.published <= timezone.now() - datetime.timedelta(days=published_condition):
+        if article.published <= expiring_data:
             article.delete()
 
 #upload data to db
@@ -23,7 +23,7 @@ def upload_data(urls_list):
     #to check that article are unique
     existing_links = set(ArticleModel.objects.values_list('link', flat=True))
     #to check that article is not old
-    expiration_date = timezone.now() - datetime.timedelta(days=published_condition)
+    expiration_date = expiring_data
 
     new_articles = []
     for article in normalized_data:
