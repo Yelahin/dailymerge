@@ -2,7 +2,7 @@ import feedparser
 import dateparser
 import datetime
 from bs4 import BeautifulSoup
-import re
+import requests
 
 ATTRIBUTE_PROCESSORS = {
     'title': lambda entry: entry.get('title'),
@@ -46,10 +46,16 @@ def get_summary_from_entry(entry) -> str | None:
 #return image url
 def get_image_url_from_entry(entry) -> str | None:
     """This function get and return image_url from entry"""
-    if "media_thumbnail" in entry:
-        return entry.media_thumbnail[0].get('url')
-    elif "media_content" in entry:
-        return entry.media_content[0].get('url')
+    if 'media_thumbnail' in entry:
+        thumb = entry.get('media_thumbnail', [])
+        if thumb and thumb[0].get('url'):
+            return thumb[0]['url']
+        
+    elif 'media_content' in entry:
+        content = entry.get('media_content', [])
+        if content and content[0].get('url'):
+            return content[0]['url']
+
     return None
 
 #return published date
@@ -63,3 +69,11 @@ def fetch_rss_entry(url) -> list:
     raw_data = feedparser.parse(url)
     entries = raw_data.entries
     return entries
+
+#check image url - timeout condition and 200 status code
+def check_image_url(image_url):
+    try:
+        response = requests.head(image_url, timeout=5)
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False

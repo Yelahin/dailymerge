@@ -11,10 +11,22 @@ app.conf.beat_schedule = {
         "task": "feeds.tasks.upload_data",
         "schedule": 5,
         "args": (
-            [
-                "https://feeds.bbci.co.uk/news/world/rss.xml", #world news
-                "https://feeds.bbci.co.uk/news/rss.xml", #world news
-                "https://www.theguardian.com/world/rss", #world news
+            [   
+                #World News
+                "https://feeds.bbci.co.uk/news/world/rss.xml", #world news +
+                "https://www.theguardian.com/world/rss", #world news +
+                "https://www.dailymail.co.uk/home/index.rss", #world news +
+
+                #Politics News
+                "https://rss.app/feeds/tFPubwkQz33TawYL.xml", #EU politics +
+                "https://rss.app/feeds/tM4rTuFUu0bLwKgS.xml", #US politics +
+                "https://rss.app/feeds/tGiu9CqL75md2Hcs.xml", #China politics +
+                "https://rss.app/feeds/tLIJILshtpaHgTYQ.xml", #Ukraine war politics +
+                "https://rss.app/feeds/tMUmTyRbNx0UVHKS.xml", #Russia politics +
+                "https://rss.politico.com/congress.xml", #Congress politics +
+                "https://rss.politico.com/defense.xml", #Defense politics +
+
+                #Sport News
                 "https://rss.app/feeds/twV4dtLhEH4l9cRG.xml", #ufc news
             ], 
         )

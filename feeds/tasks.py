@@ -2,7 +2,7 @@ from celery import shared_task
 from .models import ArticleModel
 from django.utils import timezone
 import datetime
-from .utils import get_normalized_data
+from .utils import get_normalized_data, check_image_url
 
 published_condition=1
 
@@ -27,8 +27,9 @@ def upload_data(urls_list):
 
     new_articles = []
     for article in normalized_data:
-        #check if any attribute equals None
-        if not all(article.values()):
+        image_url = check_image_url(article['image_url'])
+        #check if any attribute equals None and image url works
+        if not all(article.values()) or not image_url:
             continue
 
         link = article['link']
