@@ -2,6 +2,7 @@ import feedparser
 import dateparser
 import datetime
 from bs4 import BeautifulSoup
+from .models import ArticleCategoryModel
 import requests
 
 ATTRIBUTE_PROCESSORS = {
@@ -14,26 +15,29 @@ ATTRIBUTE_PROCESSORS = {
 
 
 #return normalized data from feeds
-def get_normalized_data(urls_list) -> list:
+def get_normalized_data(feeds_urls) -> list:
     result = []
-    for url in urls_list:
-        entries = fetch_rss_entry(url)
-        result += get_entries_attributes(entries)
+    for category, urls in feeds_urls.items():
+        for url in urls:
+            entries = fetch_rss_entry(url)
+            result += get_entries_attributes(entries, category)
     return result
         
 #return list of get_entry_attributes
-def get_entries_attributes(entries) -> list:
+def get_entries_attributes(entries, category) -> list:
     """Normalize a list of RSS feed entries into dicts."""
     entries_attributes_list = []
     for entry in entries:
-        attributes_dict = get_entry_attributes(entry)
+        attributes_dict = get_entry_attributes(entry, category)
         entries_attributes_list.append(attributes_dict)
     return entries_attributes_list
 
 #return entry attributes
-def get_entry_attributes(entry) -> dict:
-    """Go through entry and add attributes in dict."""
-    return {attr: processor(entry) for attr, processor in ATTRIBUTE_PROCESSORS.items()}
+def get_entry_attributes(entry, category) -> dict:
+    """This method return attributes of entry"""
+    article_attributes = {attr: processor(entry) for attr, processor in ATTRIBUTE_PROCESSORS.items()}
+    article_attributes['category'] = ArticleCategoryModel.objects.filter(name=category)
+    return article_attributes
 
 #return title
 def get_summary_from_entry(entry) -> str | None:
