@@ -14,7 +14,7 @@
     <nav>
         <div>
             {% for category in categories %}
-                <a href="">{{ category }}</a>
+                <a href="{% url 'filtered_news' category.slug %}">{{ category }}</a>
             {% endfor %}
         </div>
     </nav>
