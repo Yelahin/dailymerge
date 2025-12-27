@@ -36,7 +36,7 @@ def get_entries_attributes(entries, category) -> list:
 def get_entry_attributes(entry, category) -> dict:
     """This method return attributes of entry"""
     article_attributes = {attr: processor(entry) for attr, processor in ATTRIBUTE_PROCESSORS.items()}
-    article_attributes['category'] = ArticleCategoryModel.objects.filter(name=category)
+    article_attributes['category'] = ArticleCategoryModel.objects.get(name=category)
     return article_attributes
 
 #return title

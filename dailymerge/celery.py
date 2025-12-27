@@ -10,7 +10,7 @@ app = Celery('dailymerge')
 app.conf.beat_schedule = {
     "upload-data": {
         "task": "feeds.tasks.upload_data",
-        "schedule": 5,
+        "schedule": 60,
         "args": (FEEDS_URLS, )
     },
     "remove-data": {

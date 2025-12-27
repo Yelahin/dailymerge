@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from feeds.models import ArticleModel
-from .utils import menu
-
+from feeds.models import ArticleModel, ArticleCategoryModel
 
 # Create your views here.
-
-def home_page(request):
+def news_page(request):
     articles = ArticleModel.objects.all()
-    return render(request, 'core/index.html', context={'articles': articles, 'menu': menu})
+    categories = ArticleCategoryModel.objects.all()
+    return render(request, 'core/index.html', context={'articles': articles, 
+                                                       "categories": categories})
