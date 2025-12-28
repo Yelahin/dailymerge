@@ -16,8 +16,8 @@ def remove_data():
 
 #upload data to db
 @shared_task
-def upload_data(urls_list):
-    normalized_data = get_normalized_data(urls_list)
+def upload_data(feeds_urls: dict):
+    normalized_data = get_normalized_data(feeds_urls)
 
     #to check that article are unique
     existing_links = set(ArticleModel.objects.values_list('link', flat=True))
@@ -40,4 +40,4 @@ def upload_data(urls_list):
             existing_links.add(link)
 
     if new_articles:
-        ArticleModel.objects.bulk_create(new_articles)
+        ArticleModel.objects.bulk_create(new_articles, ignore_conflicts=True)

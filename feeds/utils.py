@@ -36,7 +36,7 @@ def get_entries_attributes(entries, category) -> list:
 def get_entry_attributes(entry, category) -> dict:
     """This method return attributes of entry"""
     article_attributes = {attr: processor(entry) for attr, processor in ATTRIBUTE_PROCESSORS.items()}
-    article_attributes['category'] = ArticleCategoryModel.objects.get(name=category)
+    article_attributes['category_id'] = ArticleCategoryModel.objects.get(name=category).id
     return article_attributes
 
 #return title
@@ -51,15 +51,14 @@ def get_summary_from_entry(entry) -> str | None:
 def get_image_url_from_entry(entry) -> str | None:
     """This function get and return image_url from entry"""
     if 'media_thumbnail' in entry:
-        thumb = entry.get('media_thumbnail', [])
-        if thumb and thumb[0].get('url'):
-            return thumb[0]['url']
+        return get_image_url_from_tag(entry, 'media_thumbnail')
         
     elif 'media_content' in entry:
-        content = entry.get('media_content', [])
-        if content and content[0].get('url'):
-            return content[0]['url']
-
+        return get_image_url_from_tag(entry, 'media_content')
+    
+    elif 'enclosure' in entry:
+        return get_image_url_from_tag(entry, 'enclosure')
+    
     return None
 
 #return published date
@@ -81,3 +80,10 @@ def check_image_url(image_url):
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
+
+#get image url from tag in entry    
+def get_image_url_from_tag(entry, tag):
+    tag_data = entry.get(tag, [])
+    if tag_data and tag_data[0].get('url'):
+        return tag_data[0]['url']
+    
