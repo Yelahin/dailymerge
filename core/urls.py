@@ -1,7 +1,7 @@
 from django.urls import path
-from core.views import news_page
+from core.views import ArticleListView
 
 urlpatterns = [
-    path('', news_page, name='news'),
-    path('<slug:slug>', news_page, name='filtered_news')
+    path('', ArticleListView.as_view(), name='news'),
+    path('<slug:slug>', ArticleListView.as_view(), name='filtered_news')
 ]
