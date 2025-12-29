@@ -13,6 +13,12 @@
 <body>
     <nav>
         <div>
+            <form action="">
+                <input type="search" name="search-bar">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div>
             {% for category in categories %}
                 <a href="{% url 'filtered_news' category.slug %}">{{ category }}</a>
             {% endfor %}
