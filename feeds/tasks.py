@@ -40,4 +40,4 @@ def upload_data(feeds_urls: dict):
             existing_links.add(link)
 
     if new_articles:
-        ArticleModel.objects.bulk_create(new_articles, ignore_conflicts=True)
+        ArticleModel.objects.bulk_create(new_articles, ignore_conflicts=True, batch_size=1000)
