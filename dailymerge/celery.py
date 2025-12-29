@@ -15,7 +15,7 @@ app.conf.beat_schedule = {
     },
     "remove-data": {
         "task": "feeds.tasks.remove_data",
-        "shcedule": crontab(minute="*"),
+        "schedule": crontab(minute="*"),
     }
 }
 

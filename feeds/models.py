@@ -18,7 +18,7 @@ class ArticleCategoryModel(models.Model):
 
 class ArticleModel(models.Model):
     title = models.CharField(max_length=500)
-    link = models.URLField(unique=True)
+    link = models.URLField(unique=True, max_length=350)
     published = models.DateTimeField()
     summary = models.TextField()
     image_url = models.URLField(max_length=500)
