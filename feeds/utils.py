@@ -3,7 +3,10 @@ import dateparser
 import datetime
 from bs4 import BeautifulSoup
 from .models import ArticleCategoryModel
-import requests
+import asyncio
+import aiohttp
+import ssl
+import certifi
 
 ATTRIBUTE_PROCESSORS = {
     'title': lambda entry: entry.get('title'),
@@ -73,13 +76,26 @@ def fetch_rss_entry(url) -> list:
     entries = raw_data.entries
     return entries
 
+async def check_all_images(images_urls) -> set:
+    sslcontext = ssl.create_default_context(cafile=certifi.where())
+    connector = aiohttp.TCPConnector(ssl=sslcontext)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        tasks = (check_image_url(session, image_url) for image_url in images_urls)
+        result = await asyncio.gather(*tasks)
+
+    return {image_url for image_url in result if image_url}
+
 #check image url - timeout condition and 200 status code
-def check_image_url(image_url):
+async def check_image_url(session, image_url):
     try:
-        response = requests.head(image_url, timeout=5)
-        return response.status_code == 200
-    except requests.exceptions.RequestException:
-        return False
+        async with session.get(
+            image_url,
+            timeout=aiohttp.ClientTimeout(total=5)
+        ) as response:
+            if response.status == 200:
+                return image_url
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None
 
 #get image url from tag in entry    
 def get_image_url_from_tag(entry, tag):

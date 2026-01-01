@@ -2,7 +2,8 @@ from celery import shared_task
 from .models import ArticleModel
 from django.utils import timezone
 import datetime
-from .utils import get_normalized_data, check_image_url
+from .utils import get_normalized_data, check_all_images
+import asyncio
 
 published_condition=1
 
@@ -24,11 +25,9 @@ def upload_data(feeds_urls: dict):
     #to check that article is not old    
     expiring_data = timezone.now() - datetime.timedelta(days=published_condition)
 
-    new_articles = []
+    filtered_articles = []
     for article in normalized_data:
-        image_url = check_image_url(article['image_url'])
-        #check if any attribute equals None and image url works
-        if not all(article.values()) or not image_url:
+        if not all(article.values()):
             continue
 
         link = article['link']
@@ -36,8 +35,16 @@ def upload_data(feeds_urls: dict):
         if link not in existing_links \
         and article['published'] >= expiring_data:
             #append ArticleModel instance to pass bulk_create
-            new_articles.append(ArticleModel(**article))
+            filtered_articles.append(article)
             existing_links.add(link)
+
+    images_urls = (article['image_url'] for article in filtered_articles)
+
+    valid_images_urls = asyncio.run(check_all_images(images_urls))
+
+    new_articles = [ArticleModel(**article) for article in filtered_articles
+                    if article['image_url'] in valid_images_urls]
+
 
     if new_articles:
         ArticleModel.objects.bulk_create(new_articles, ignore_conflicts=True, batch_size=1000)
