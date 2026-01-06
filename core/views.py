@@ -18,8 +18,8 @@ class ArticleListView(ListView):
         slug = self.kwargs.get('slug', self.default_category)
 
         #Search bar
-        if 'search-bar' in self.request.GET:
-            search_terms = self.request.GET['search-bar'].split()
+        if 'search_bar' in self.request.GET:
+            search_terms = self.request.GET['search_bar'].split()
             query = Q()
             for term in search_terms:
                 query &= Q(title__icontains=term) | Q(summary__icontains=term)
@@ -47,3 +47,4 @@ class ArticleListView(ListView):
         if not self.kwargs.get('slug'):
             return redirect('filtered_news', self.default_category)
         return super().dispatch(request, *args, **kwargs)
+    

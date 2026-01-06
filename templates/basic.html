@@ -18,21 +18,18 @@
                 <a href="/" style="font-weight: 800; font-size: 1.5rem; color: var(--primary-color);">DailyMerge</a>
             </div>
             <form action="">
-                <input type="search" name="search-bar" placeholder="Search news...">
+                <input type="search" name="search_bar" placeholder="Search news..." value="{{ request.GET.search_bar }}">
                 <button type="submit">Search</button>
             </form>
         </div>
         <div class="nav-bottom">
             <div class="nav-links">
-                {% load cache %}
-                {% cache 600 categories request.resolver_match.kwargs.slug %}
                 {% for category in categories %}
                 <a href="{% url 'filtered_news' category.slug %}"
-                   class="{% if category.slug == request.resolver_match.kwargs.slug %}active{% endif %}">
+                   class="{% if category.slug == request.resolver_match.kwargs.slug and not request.GET.search_bar %}active{% endif %}">
                     {{ category }}
                 </a>
                 {% endfor %}
-                {% endcache %}
             </div>
         </div>
     </nav>
