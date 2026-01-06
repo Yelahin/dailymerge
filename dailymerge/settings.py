@@ -30,6 +30,13 @@ SECRET_KEY = os.environ['DJANGO_SECRET']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda request: True,  # always show toolbar
+}
+
+
+
 ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
 
 INTERNAL_IPS = [
@@ -37,7 +44,6 @@ INTERNAL_IPS = [
     "127.0.0.1",
     "172.19.0.1",
 ]
-
 # Application definition
 
 INSTALLED_APPS = [
