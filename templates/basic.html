@@ -24,12 +24,15 @@
         </div>
         <div class="nav-bottom">
             <div class="nav-links">
+                {% load cache %}
+                {% cache 600 categories request.resolver_match.kwargs.slug %}
                 {% for category in categories %}
                 <a href="{% url 'filtered_news' category.slug %}"
                    class="{% if category.slug == request.resolver_match.kwargs.slug %}active{% endif %}">
                     {{ category }}
                 </a>
                 {% endfor %}
+                {% endcache %}
             </div>
         </div>
     </nav>
