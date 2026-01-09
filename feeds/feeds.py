@@ -1,4 +1,9 @@
-FEEDS_URLS = {
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+RSS_FEEDS = {
     "World News": [
         "https://feeds.bbci.co.uk/news/world/rss.xml",              #World news
         "https://www.theguardian.com/world/rss",                    #World news
@@ -19,5 +24,18 @@ FEEDS_URLS = {
         #Soccer
         "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=fs/soccer,soccer/epl/league/1,soccer/mls/league/5,soccer/ucl/league/7,soccer/europa/league/8,soccer/wc/league/12,soccer/euro/league/13,soccer/wwc/league/14,soccer/nwsl/league/20,soccer/cwc/league/26,soccer/gold_cup/league/32,soccer/unl/league/67",
         "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=soccer/wc/league/12",
+    ]
+}
+
+API_FEEDS = {
+    "World News": [
+        {
+            "url": "https://newsapi.org/v2/everything",
+            "params": {
+                "apiKey": os.environ['apiKey'],
+                "language": "en",
+                "q": "politics",
+            }
+        }
     ]
 }

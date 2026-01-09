@@ -2,10 +2,10 @@ from celery import shared_task
 from .models import ArticleModel
 from django.utils import timezone
 import datetime
-from .utils import get_normalized_data, check_all_images
+from .utils import get_normalized_data, check_all_images, filter_normalized_data
 import asyncio
 
-published_condition=1
+published_condition=20
 
 #remove data from db
 @shared_task
@@ -17,34 +17,15 @@ def remove_data():
 
 #upload data to db
 @shared_task
-def upload_data(feeds_urls: dict):
-    normalized_data = get_normalized_data(feeds_urls)
+def upload_data(feed_sources):
+    for feeds in feed_sources:
+        normalized_data = get_normalized_data(feeds)
 
-    #to check that article are unique
-    existing_links = set(ArticleModel.objects.values_list('link', flat=True))
-    #to check that article is not old    
-    expiring_data = timezone.now() - datetime.timedelta(days=published_condition)
+        existing_links = set(ArticleModel.objects.values_list('link', flat=True))
 
-    filtered_articles = []
-    for article in normalized_data:
-        if not all(article.values()):
-            continue
+        new_articles = filter_normalized_data(normalized_data, published_condition, existing_links)
 
-        link = article['link']
+        existing_links.update(article.link for article in new_articles)
 
-        if link not in existing_links \
-        and article['published'] >= expiring_data:
-            #append ArticleModel instance to pass bulk_create
-            filtered_articles.append(article)
-            existing_links.add(link)
-
-    images_urls = (article['image_url'] for article in filtered_articles)
-
-    valid_images_urls = asyncio.run(check_all_images(images_urls))
-
-    new_articles = [ArticleModel(**article) for article in filtered_articles
-                    if article['image_url'] in valid_images_urls]
-
-
-    if new_articles:
-        ArticleModel.objects.bulk_create(new_articles, ignore_conflicts=True, batch_size=1000)
+        if new_articles:
+            ArticleModel.objects.bulk_create(new_articles, ignore_conflicts=True, batch_size=1000)
