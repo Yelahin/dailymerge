@@ -30,13 +30,6 @@ SECRET_KEY = os.environ['DJANGO_SECRET']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda request: True,  # always show toolbar
-}
-
-
-
 ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
 
 INTERNAL_IPS = [
@@ -56,13 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
     'feeds.apps.FeedsConfig',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,6 +94,8 @@ DATABASES = {
         'PORT': os.environ['POSTGRES_PORT']
     }
 }
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
 
 
 #Cache
