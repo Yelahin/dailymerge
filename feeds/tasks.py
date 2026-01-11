@@ -2,14 +2,11 @@ from celery import shared_task
 from .models import ArticleModel
 from django.utils import timezone
 import datetime
-from .utils import get_normalized_data, check_all_images, filter_normalized_data
-import asyncio
-
-published_condition=20
+from .utils import get_normalized_data, filter_normalized_data
 
 #remove data from db
 @shared_task
-def remove_data():
+def remove_data(published_condition: int):
     expiring_data = timezone.now() - datetime.timedelta(days=published_condition)
     for article in ArticleModel.objects.all():
         if article.published <= expiring_data:
@@ -17,7 +14,7 @@ def remove_data():
 
 #upload data to db
 @shared_task
-def upload_data(feed_sources):
+def upload_data(feed_sources: list[dict[list[any]]], published_condition: int):
     for feeds in feed_sources:
         normalized_data = get_normalized_data(feeds)
 

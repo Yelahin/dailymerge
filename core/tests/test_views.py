@@ -10,18 +10,18 @@ class ArticleListViewTestCase(TestCase):
         #Article of World News category
         ArticleModel.objects.create(
             title="World News",
-            link="link_1",
+            link="https://example.com/articles/some-article",
             published=timezone.now(),
             summary="Summary of world news",
-            image_url="image_url",
+            image_url="https://example.com/image.jpg",
             category_id=category_1.id)
         #Article of Sport News category
         ArticleModel.objects.create(
             title="Sport News",
-            link="link_2",
+            link="https://example.com/articles/some-another-article",
             published=timezone.now(),
             summary="Summary of sport news",
-            image_url="image_url",
+            image_url="https://example.com/image.jpg",
             category_id=category_2.id
         )
         
