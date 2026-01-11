@@ -19,7 +19,7 @@ app.conf.beat_schedule = {
         "task": "feeds.tasks.remove_data",
         "schedule": crontab(minute="*"),
         "args": (published_condition, )
-    }
+    },
 }
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
