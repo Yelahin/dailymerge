@@ -79,7 +79,7 @@ class UploadDataTaskTestCase(TestCase):
         self.assertEqual(result, "Some test text!")
 
     def test_get_query_attributes(self):
-        result = get_query_attributes(self.query, self.category.name)
+        result = get_query_attributes(self.query, self.category.id)
         expected_result = {
             'title': self.query['title'],
             'link': self.query['link'],
@@ -92,7 +92,7 @@ class UploadDataTaskTestCase(TestCase):
         self.assertEqual(result, expected_result)
 
     def test_get_queryset_attributes(self):
-        result = get_queryset_attributes(self.queries, self.category.name)
+        result = get_queryset_attributes(self.queries, self.category.id)
         expected_result = [
             {
                 'title': self.query['title'],
@@ -114,7 +114,7 @@ class UploadDataTaskTestCase(TestCase):
         self.assertCountEqual(result, expected_result)
 
     def test_filter_normalized_data(self):
-        normalized_data = get_queryset_attributes(self.queries, self.category.name)
+        normalized_data = get_queryset_attributes(self.queries, self.category.id)
         with patch('feeds.utils.check_all_images', new_callable=AsyncMock) as mock:
             mock.return_value = {"https://example.com/image.jpg"}
 
@@ -122,7 +122,7 @@ class UploadDataTaskTestCase(TestCase):
 
             result = filter_normalized_data(normalized_data, 10, set())
             expected_result = [ArticleModel(**article) for article in 
-                               get_queryset_attributes(self.queries, self.category.name)]
+                               get_queryset_attributes(self.queries, self.category.id)]
             #check by unique field
             self.assertCountEqual([article.link for article in result],
                              [article.link for article in expected_result])
@@ -133,13 +133,13 @@ class UploadDataTaskTestCase(TestCase):
             existing_links = {self.queries[0]['link']}
             result = filter_normalized_data(normalized_data, 10, existing_links)
             expected_result = [ArticleModel(**article) for article in 
-                               get_queryset_attributes(self.queries, self.category.name)]
+                               get_queryset_attributes(self.queries, self.category.id)]
             
             self.assertNotEqual([article.link for article in result],
                                 [article.link for article in expected_result])
 
             expected_result = [ArticleModel(**article) for article in 
-                               get_queryset_attributes(self.queries, self.category.name)
+                               get_queryset_attributes(self.queries, self.category.id)
                                if article['link'] not in existing_links]
             
             self.assertCountEqual([article.link for article in result],
@@ -152,13 +152,13 @@ class UploadDataTaskTestCase(TestCase):
             expiring_date = 3
             result = filter_normalized_data(normalized_data, expiring_date, set())
             expected_result = [ArticleModel(**article) for article in 
-                               get_queryset_attributes(self.queries, self.category.name)]
+                               get_queryset_attributes(self.queries, self.category.id)]
             
             self.assertNotEqual([article.link for article in result],
                                 [article.link for article in expected_result])
             
             expected_result = [ArticleModel(**article) for article in
-                               get_queryset_attributes(self.queries, self.category.name)
+                               get_queryset_attributes(self.queries, self.category.id)
                                if article['published'] >= self.now - datetime.timedelta(days=expiring_date)]
             
             self.assertCountEqual([article.link for article in result],

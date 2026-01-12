@@ -1,5 +1,5 @@
 from celery import shared_task
-from .models import ArticleModel
+from .models import ArticleModel, RSSFeed, APIFeed
 from django.utils import timezone
 import datetime
 from .utils import get_normalized_data, filter_normalized_data
@@ -14,7 +14,11 @@ def remove_data(published_condition: int):
 
 #upload data to db
 @shared_task
-def upload_data(feed_sources: list[dict[list[any]]], published_condition: int):
+def upload_data(published_condition: int):
+    feed_sources = [
+        [feed for feed in RSSFeed.objects.filter(active=True)],
+        [feed for feed in APIFeed.objects.filter(active=True)]
+    ]
     for feeds in feed_sources:
         normalized_data = get_normalized_data(feeds)
 

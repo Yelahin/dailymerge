@@ -16,6 +16,7 @@ class ArticleCategoryModel(models.Model):
     def __str__(self):
         return self.name
 
+
 class ArticleModel(models.Model):
     title = models.CharField(max_length=500)
     link = models.URLField(unique=True, max_length=350)
@@ -26,3 +27,15 @@ class ArticleModel(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class RSSFeed(models.Model):
+    url = models.URLField(max_length=500)
+    category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+
+class APIFeed(models.Model):
+    url = models.URLField(max_length=500)
+    category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+    params = models.JSONField()

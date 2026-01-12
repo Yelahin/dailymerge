@@ -2,7 +2,7 @@ import feedparser
 import dateparser
 import datetime
 from bs4 import BeautifulSoup
-from .models import ArticleCategoryModel, ArticleModel
+from .models import ArticleModel, APIFeed, RSSFeed
 import asyncio
 import aiohttp
 import ssl
@@ -56,27 +56,21 @@ def filter_normalized_data(normalized_data: list[dict[str: any]],
     
     return valid_articles
 
-def get_normalized_data(feed_urls: dict) -> list[dict[str: any]]:
+def get_normalized_data(feeds: list[RSSFeed | APIFeed]) -> list[dict[str: any]]:
     """This function returns normalized data from feed urls"""
     result = []
-    for category, urls in feed_urls.items():
-        for url_data in urls:
-            #APIs feeds
-            if isinstance(url_data, dict):
-                url = url_data['url']
-                params = url_data['params']
-                data = fetch_api_feeds(url, params)
-            #RSS feeds
-            else:
-                url = url_data
-                data = fetch_rss_entry(url)
-            result += get_queryset_attributes(data, category)
+    for feed in feeds:
+        if isinstance(feed, RSSFeed):
+            queryset = fetch_rss_entry(feed)
+        else:
+            queryset = fetch_api_feeds(feed)
+        result += get_queryset_attributes(queryset, feed.category.id)
     return result
 
 
 #Get attributes functions
 
-def get_queryset_attributes(queryset: list, category: str) -> list[dict[str: any]]:
+def get_queryset_attributes(queryset: list, category: int) -> list[dict[str: any]]:
     """This function returns list of dicts with query attributes"""
     queryset_attributes_list = []
     for query in queryset:
@@ -84,10 +78,10 @@ def get_queryset_attributes(queryset: list, category: str) -> list[dict[str: any
         queryset_attributes_list.append(attributes_dict)
     return queryset_attributes_list
 
-def get_query_attributes(query: dict, category: str) -> dict[str: any]:
+def get_query_attributes(query: dict, category: int) -> dict[str: any]:
     """This function returns dict of querys attributes"""
     article_attributes = {attr: processor(query) for attr, processor in ATTRIBUTE_PROCESSORS.items()}
-    article_attributes['category_id'] = ArticleCategoryModel.objects.get(name=category).id
+    article_attributes['category_id'] = category
     return article_attributes
 
 
@@ -126,15 +120,15 @@ def get_published_from_query(query: dict) -> datetime.datetime | None:
 
 #Fetching functions
 
-def fetch_rss_entry(url: str) -> list:
+def fetch_rss_entry(rss: RSSFeed) -> list:
     """This function fetchs data from rss feeds"""
-    raw_data = feedparser.parse(url)
+    raw_data = feedparser.parse(rss.url)
     entries = raw_data.entries
     return entries
 
-def fetch_api_feeds(url: str, params: dict) -> list:
+def fetch_api_feeds(api: APIFeed) -> list:
     """This function fetchs data from API feeds"""
-    response = requests.get(url, params=params)
+    response = requests.get(api.url, params=api.params)
     json = response.json()
     articles = json['articles']
     return articles
