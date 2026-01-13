@@ -11,12 +11,12 @@ published_condition = 7
 app.conf.beat_schedule = {
     "upload-data": {
         "task": "feeds.tasks.upload_data",
-        "schedule": 5,
+        "schedule": crontab(minute="5"),
         "args": (published_condition, )
     },
     "remove-data": {
         "task": "feeds.tasks.remove_data",
-        "schedule": crontab(minute="*"),
+        "schedule": crontab(minute="5"),
         "args": (published_condition, )
     },
 }
