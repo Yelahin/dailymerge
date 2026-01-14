@@ -17,11 +17,15 @@
 ## Installation
 
 1. Clone the repo
-`git clone https://github.com/Yelahin/dailymerge.git`
+```sh
+git clone https://github.com/Yelahin/dailymerge.git
+```
 
-2. Move to root folder(you should find manage.py file in this folder)
+2. Navigate to the project root (where `manage.py` is located)
 
-`cd dailymerge`
+```sh
+cd dailymerge
+```
 
 3. Create .env file and set up variables
 
@@ -36,21 +40,23 @@ POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 ```
 
-4. Build the Docker Image
+4. Start Docker Compose and create superuser
 
-`docker build .`
+```sh
+docker compose up --build -d
+```
 
-5. Start Docker Compose and create superuser
+```sh
+docker exec -it django python manage.py createsuperuser
+```
 
-`docker compose up --build -d`
-
-`docker exec -it django python manage.py createsuperuser`
-
-6. Configure categories and sources
+5. Configure categories and sources
 
 Open the Django admin panel:
 
-`http://localhost:8080/admin/`
+```sh
+http://localhost:8080/admin/
+```
 
 Log in with the superuser account and:
 
@@ -70,7 +76,7 @@ Each source must provide the following fields:
 
 - Image URL (media_thumbnail, media_content, enclosure, or urlToImage)
 
-## Build with
+## Built with
 
 Core technologies and libraries used in this project.
 
@@ -90,3 +96,10 @@ Core technologies and libraries used in this project.
 
 
 - ![image](https://img.shields.io/badge/redis-CC0000.svg?&style=for-the-badge&logo=redis&logoColor=white)
+
+<hr>
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
