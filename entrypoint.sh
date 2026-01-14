@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Appling migrations"
+echo "Applying migrations"
 
 python manage.py migrate
 
