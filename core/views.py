@@ -29,7 +29,7 @@ class ArticleListView(ListView):
             #Caching for default category
             if slug == self.default_category:
                 queryset = cache.get_or_set(
-                    f'article_category_{self.default_category}',
+                    f'article_category_{slug}',
                     ArticleModel.objects.filter(category__slug=slug),
                     30,
                 )
