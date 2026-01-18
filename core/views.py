@@ -36,7 +36,7 @@ class ArticleListView(ListView):
             #Not default category
             else:
                 queryset = ArticleModel.objects.filter(category__slug=slug)
-        return queryset
+        return queryset.order_by("-published")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

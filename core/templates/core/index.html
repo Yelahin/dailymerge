@@ -1,11 +1,13 @@
 {% extends "basic.html" %}
 {% block content %}
+{% load humanize %}
 <div class="news-container">
     {% for article in articles %}
     <div class="news-item">
         <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer">
             <img src="{{ article.image_url }}" alt="{{ article.title }}" loading="lazy">
             <div class="news-content">
+                <p>{{ article.published|naturaltime }}</p>
                 <strong>{{ article.title }}</strong>
                 <p>{{ article.summary|truncatechars:150 }}</p>
             </div>
