@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
 
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'core.apps.CoreConfig',
     'feeds.apps.FeedsConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -154,3 +155,6 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 #Celery beat settings
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# Registration settings
+LOGIN_REDIRECT_URL = '/'
