@@ -34,7 +34,10 @@
                 </div>
             </div>
             {% else %}
-            <a href="{% url 'login' %}" style="font-weight: 500;">Log In</a>
+            <div class="nav-auth-buttons">
+                <a href="{% url 'login' %}" class="btn-auth btn-login">Log In</a>
+                <a href="{% url 'sign_up' %}" class="btn-auth btn-signup">Sign Up</a>
+            </div>
             {% endif %}
         </div>
         <div class="nav-bottom">

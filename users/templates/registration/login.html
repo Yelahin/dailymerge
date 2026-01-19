@@ -29,6 +29,10 @@
     {% endfor %}
 
     <button type="submit">Sign In</button>
+
+    <div class="auth-bottom-link">
+      Don't have an account? <a href="{% url 'sign_up' %}">Sign up</a>
+    </div>
   </form>
 </div>
 {% endblock %}
