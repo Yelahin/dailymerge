@@ -17,16 +17,31 @@
             <div class="logo">
                 <a href="/" style="font-weight: 800; font-size: 1.5rem; color: var(--primary-color);">DailyMerge</a>
             </div>
-            <form action="">
-                <input type="search" name="search_bar" placeholder="Search news..." value="{{ request.GET.search_bar }}">
-                <button type="submit">Search</button>
+            <form class="search-form" action="">
+                <input type="search" name="search_bar" placeholder="Search news..."
+                    value="{{ request.GET.search_bar }}">
+                <button class="search-button" type="submit">Search</button>
             </form>
+            {% if request.user.is_authenticated %}
+            <div class="user-menu">
+                <span class="user-name">{{ user.username }} &#9662;</span>
+                <div class="user-dropdown">
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Log Out</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" style="font-weight: 500;">Log In</a>
+            {% endif %}
         </div>
         <div class="nav-bottom">
             <div class="nav-links">
                 {% for category in categories %}
                 <a href="{% url 'filtered_news' category.slug %}"
-                   class="{% if category.slug == request.resolver_match.kwargs.slug and not request.GET.search_bar %}active{% endif %}">
+                    class="{% if category.slug == request.resolver_match.kwargs.slug and not request.GET.search_bar %}active{% endif %}">
                     {{ category }}
                 </a>
                 {% endfor %}
