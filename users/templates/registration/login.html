@@ -1,6 +1,34 @@
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form }}
-  <button type="submit">Log In</button>
-</form>
+{% extends "basic.html" %}
+
+{% block content %}
+<div class="auth-container">
+  <h2>Welcome Back</h2>
+  <span class="auth-subtitle">Please enter your details to sign in.</span>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <ul class="error-list">
+      {% for field in form %}
+      {% for error in field.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {{ field }}
+    </div>
+    {% endfor %}
+
+    <button type="submit">Sign In</button>
+  </form>
+</div>
+{% endblock %}
