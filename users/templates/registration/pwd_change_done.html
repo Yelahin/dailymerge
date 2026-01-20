@@ -1,0 +1,22 @@
+{% extends "basic.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🔒</span>
+        <h2>Password Changed</h2>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary); line-height: 1.6;">
+        <p>Your password has been successfully updated.</p>
+        <p>You can now use your new password to sign in to your account securely across all your devices.</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">If you did not make this change, please contact support
+            immediately.</p>
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="{% url 'profile' %}" class="auth-bottom-link" style="font-weight: bold; font-size: 1.1rem;">Return to
+            Profile</a>
+    </div>
+</div>
+{% endblock %}
