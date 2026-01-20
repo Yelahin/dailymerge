@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
 from users.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.urls import reverse_lazy
 
@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 @login_required
 def profile(request):
     return render(request, 'registration/profile.html')
+
 
 class SignUp(CreateView):
     form_class = UserCreationForm
@@ -25,11 +26,28 @@ class SignUp(CreateView):
         login(self.request, user)
         return response
 
-  
+
 class PasswordChange(PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy("password_change_done")
     template_name = "registration/pwd_change.html"
 
+
 class PasswordChangeDone(PasswordChangeDoneView):
     template_name = "registration/pwd_change_done.html"
+
+
+class PasswordReset(PasswordResetView):
+    template_name = "registration/pwd_reset_form.html"
+
+
+class PasswordResetDone(PasswordResetDoneView):
+    template_name = "registration/pwd_reset_done.html"
+
+
+class PasswordResetConfirm(PasswordResetConfirmView):   
+    template_name = "registration/pwd_reset_confirm.html"
+
+
+class PasswordResetComplete(PasswordResetCompleteView):
+    template_name = "registration/pwd_reset_complete.html"

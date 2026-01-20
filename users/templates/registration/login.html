@@ -31,7 +31,8 @@
     <button type="submit">Sign In</button>
 
     <div class="auth-bottom-link">
-      Don't have an account? <a href="{% url 'sign_up' %}">Sign up</a>
+      <p>Don't have an account? <a href="{% url 'sign_up' %}">Sign up</a></p>
+      <p style="margin-top: 0.5rem;">Forgot your password? <a href="{% url 'password_reset' %}">Reset Password</a></p>
     </div>
   </form>
 </div>
