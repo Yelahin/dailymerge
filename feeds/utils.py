@@ -97,19 +97,21 @@ def get_summary_from_query(query: dict) -> str | None:
 
 def get_image_url_from_query(query: dict) -> str | None:
     """Thins function returns image url or None from query"""
-    if 'media_thumbnail' in query:
-        return get_image_url_from_tag(query, 'media_thumbnail')
+    tags = [
+        'media_thumbnail',
+        'media_content',
+        'enclosure',
+        ]
+    
+    for tag in tags:
+        value = query.get(tag)
+        if not value:
+            continue
         
-    elif 'media_content' in query:
-        return get_image_url_from_tag(query, 'media_content')
-    
-    elif 'enclosure' in query:
-        return get_image_url_from_tag(query, 'enclosure')
-    
-    if 'urlToImage' in query:
-        return query['urlToImage']
-    
-    return None
+        if isinstance(value, str):
+            return query.get(tag)
+        else:
+            return get_image_url_from_tag(query, tag)
 
 def get_published_from_query(query: dict) -> datetime.datetime | None:
     """This function returns published date from query in datetime.datetime format"""
@@ -162,5 +164,5 @@ def get_image_url_from_tag(query: dict, tag: str) -> str:
     """This function returns image url from query using tag"""
     tag_data = query.get(tag, [])
     if tag_data and tag_data[0].get('url'):
-        return tag_data[0]['url']
+        return tag_data[0].get('url')
     
