@@ -8,9 +8,7 @@ from .utils import get_normalized_data, filter_normalized_data
 @shared_task
 def remove_data(published_condition: int):
     expiring_data = timezone.now() - datetime.timedelta(days=published_condition)
-    for article in ArticleModel.objects.all():
-        if article.published <= expiring_data:
-            article.delete()
+    ArticleModel.objects.filter(published__lt=expiring_data).delete()
 
 #upload data to db
 @shared_task
