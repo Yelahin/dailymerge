@@ -6,7 +6,6 @@ from django.shortcuts import redirect
 
 # Create your views here.
 
-
 class ArticleListView(ListView):
     model = ArticleModel
     template_name = 'core/index.html'
@@ -29,13 +28,13 @@ class ArticleListView(ListView):
             #Caching for default category
             if slug == self.default_category:
                 queryset = cache.get_or_set(
-                    f'article_category_{slug}',
-                    ArticleModel.objects.filter(category__slug=slug),
+                    f'article_source_category_{slug}',
+                    ArticleModel.objects.filter(source__category__slug=slug),
                     30,
                 )
             #Not default category
             else:
-                queryset = ArticleModel.objects.filter(category__slug=slug)
+                queryset = ArticleModel.objects.filter(source__category__slug=slug)
         return queryset.order_by("-published")
 
     def get_context_data(self, **kwargs):

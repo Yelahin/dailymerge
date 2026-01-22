@@ -1,5 +1,5 @@
 from django.contrib import admin
-from feeds.models import ArticleModel, ArticleCategoryModel, RSSFeed, APIFeed
+from feeds.models import ArticleModel, ArticleCategoryModel, Source
 
 # Register your models here.
 
@@ -29,16 +29,8 @@ class ActivateMixin:
         queryset.update(active=False)
 
 
-@admin.register(RSSFeed)
-class RSSFeedAdmin(ActivateMixin, admin.ModelAdmin):
+@admin.register(Source)
+class SourceAdmin(admin.ModelAdmin):
     list_display = ['url', 'category', 'active']
     list_display_links = ['url']
     ordering = ['category']
-
-
-@admin.register(APIFeed)
-class APIFeeAdmin(ActivateMixin, admin.ModelAdmin):
-    list_display = ['url', 'category', 'active']
-    list_display_links = ['url']
-    ordering = ['category']
-    

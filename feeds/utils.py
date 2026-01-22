@@ -2,7 +2,7 @@ import feedparser
 import dateparser
 import datetime
 from bs4 import BeautifulSoup
-from .models import ArticleModel, APIFeed, RSSFeed
+from .models import ArticleModel, Source
 import asyncio
 import aiohttp
 import ssl
@@ -56,32 +56,32 @@ def filter_normalized_data(normalized_data: list[dict[str: any]],
     
     return valid_articles
 
-def get_normalized_data(feeds: list[RSSFeed | APIFeed]) -> list[dict[str: any]]:
+def get_normalized_data(feeds: list[Source]) -> list[dict[str: any]]:
     """This function returns normalized data from feed urls"""
     result = []
     for feed in feeds:
-        if isinstance(feed, RSSFeed):
+        if feed.source_type == Source.SourceType.RSS:
             queryset = fetch_rss_entry(feed)
-        else:
+        elif feed.source_type == Source.SourceType.API:
             queryset = fetch_api_feeds(feed)
-        result += get_queryset_attributes(queryset, feed.category.id)
+        result += get_queryset_attributes(queryset, feed)
     return result
 
 
 #Get attributes functions
 
-def get_queryset_attributes(queryset: list, category: int) -> list[dict[str: any]]:
+def get_queryset_attributes(queryset: list, source: Source) -> list[dict[str: any]]:
     """This function returns list of dicts with query attributes"""
     queryset_attributes_list = []
     for query in queryset:
-        attributes_dict = get_query_attributes(query, category)
+        attributes_dict = get_query_attributes(query, source)
         queryset_attributes_list.append(attributes_dict)
     return queryset_attributes_list
 
-def get_query_attributes(query: dict, category: int) -> dict[str: any]:
+def get_query_attributes(query: dict, source: Source) -> dict[str: any]:
     """This function returns dict of querys attributes"""
     article_attributes = {attr: processor(query) for attr, processor in ATTRIBUTE_PROCESSORS.items()}
-    article_attributes['category_id'] = category
+    article_attributes['source'] = source
     return article_attributes
 
 
@@ -122,13 +122,13 @@ def get_published_from_query(query: dict) -> datetime.datetime | None:
 
 #Fetching functions
 
-def fetch_rss_entry(rss: RSSFeed) -> list:
+def fetch_rss_entry(rss: Source) -> list:
     """This function fetchs data from rss feeds"""
     raw_data = feedparser.parse(rss.url)
     entries = raw_data.entries
     return entries
 
-def fetch_api_feeds(api: APIFeed) -> list:
+def fetch_api_feeds(api: Source) -> list:
     """This function fetchs data from API feeds"""
     response = requests.get(api.url, params=api.params)
     json = response.json()
