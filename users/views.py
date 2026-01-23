@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import FormMixin
 from users.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
@@ -12,19 +13,10 @@ from django.urls import reverse_lazy
 
 # Create your views here.
 
-class Profile(FormMixin, DetailView):
-    model = User
+class Profile(FormMixin, LoginRequiredMixin, TemplateView):
     form_class = SourceForm
     template_name = 'registration/profile.html'
-    context_object_name = 'user'
-    login_required = True
-    pk_url_kwarg = 'pk'
-
-    def get_success_url(self):
-        return reverse_lazy('profile', kwargs={'pk': self.kwargs['pk']})
-
-    def get_object(self, queryset=None):
-        return super().get_object(queryset)
+    success_url = reverse_lazy('profile')
 
     def form_valid(self, form):
         source = form.save()
@@ -42,8 +34,6 @@ class Profile(FormMixin, DetailView):
                 pass
             return HttpResponseRedirect(self.get_success_url())
 
-        self.object = self.get_object()
-        
         # Check if source with this URL already exists to avoid unique constraint error
         if 'url' in request.POST:
             url = request.POST.get('url')
@@ -59,7 +49,7 @@ class Profile(FormMixin, DetailView):
         return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
-        user = self.get_object()
+        user = self.request.user
         context = super().get_context_data(**kwargs)
         context['sources'] = user.usersettings.source.all()
         return context

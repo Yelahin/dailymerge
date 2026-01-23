@@ -26,7 +26,7 @@
             <div class="user-menu">
                 <span class="user-name">{{ user.username }} &#9662;</span>
                 <div class="user-dropdown">
-                    <a href="{% url 'profile' pk=user.id %}">Profile</a>
+                    <a href="{% url 'profile' %}">Profile</a>
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
                         <button type="submit">Log Out</button>

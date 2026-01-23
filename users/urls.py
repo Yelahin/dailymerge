@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from users.views import Profile, SignUp, PasswordChange, PasswordChangeDone, PasswordReset, PasswordResetDone, PasswordResetComplete, PasswordResetConfirm
 
 urlpatterns = [
-    path("profile/<int:pk>/", Profile.as_view(), name="profile"),
+    path("profile/", Profile.as_view(), name="profile"),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("password_change/", PasswordChange.as_view(), name="password_change"),
