@@ -22,7 +22,7 @@ class Source(models.Model):
         RSS = "RSS", "RSS"
         API = "API", "API"
 
-    url = models.URLField(max_length=500)
+    url = models.URLField(max_length=500, unique=True)
     category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     params = models.JSONField(blank=True, null=True)

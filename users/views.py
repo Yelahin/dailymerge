@@ -1,17 +1,68 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
+from django.http import HttpResponseRedirect
+from django.views.generic import CreateView, DetailView
+from django.views.generic.edit import FormMixin
 from users.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import User
+from feeds.forms import SourceForm
+from feeds.models import Source
 from django.urls import reverse_lazy
 
 # Create your views here.
 
-@login_required
-def profile(request):
-    return render(request, 'registration/profile.html')
+class Profile(FormMixin, DetailView):
+    model = User
+    form_class = SourceForm
+    template_name = 'registration/profile.html'
+    context_object_name = 'user'
+    login_required = True
+    pk_url_kwarg = 'pk'
+
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'pk': self.kwargs['pk']})
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset)
+
+    def form_valid(self, form):
+        source = form.save()
+        user = self.request.user.usersettings
+        user.source.add(source)
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def post(self, request, *args, **kwargs):
+        if 'delete_source' in request.POST:
+            source_id = request.POST.get('delete_source')
+            try:
+                source_to_remove = Source.objects.get(id=source_id)
+                request.user.usersettings.source.remove(source_to_remove)
+            except Source.DoesNotExist:
+                pass
+            return HttpResponseRedirect(self.get_success_url())
+
+        self.object = self.get_object()
+        
+        # Check if source with this URL already exists to avoid unique constraint error
+        if 'url' in request.POST:
+            url = request.POST.get('url')
+            existing_source = Source.objects.filter(url=url).first()
+            if existing_source:
+                # If source exists, just add it to the user's settings
+                request.user.usersettings.source.add(existing_source)
+                return HttpResponseRedirect(self.get_success_url())
+
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        return self.form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        user = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['sources'] = user.usersettings.source.all()
+        return context
 
 
 class SignUp(CreateView):
