@@ -55,8 +55,15 @@
                     <form method="POST" class="delete-source-form">
                         {% csrf_token %}
                         <input type="hidden" name="delete_source" value="{{ source.id }}">
+                        <a href="{% url 'source_update' source.id %}" class="btn-update" title="Update source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                            </svg>
+                        </a>
                         <button type="submit" class="btn-delete" title="Remove source">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
                                 <path d="M3 6h18"></path>
@@ -259,19 +266,21 @@
         margin-top: 0.2rem;
     }
 
-    .btn-delete {
+    .btn-delete,
+    .btn-update {
         background: none;
         border: none;
         color: #94a3b8;
-        /* More subtle default color */
         cursor: pointer;
-        opacity: 0;
+        opacity: 0.5;
         transition: all 0.2s;
-        padding: 0.25rem;
-        border-radius: 4px;
+        padding: 0.5rem;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
+        text-decoration: none;
+        /* For the anchor tag */
     }
 
     .btn-delete:hover {
@@ -280,7 +289,14 @@
         transform: scale(1.1);
     }
 
-    .source-item:hover .btn-delete {
+    .btn-update:hover {
+        color: var(--primary-color, #3b82f6);
+        background-color: #e0f2fe;
+        transform: scale(1.1);
+    }
+
+    .source-item:hover .btn-delete,
+    .source-item:hover .btn-update {
         opacity: 1;
     }
 

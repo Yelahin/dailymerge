@@ -55,6 +55,12 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
         return context
 
 
+class SourceUpdate(UpdateView):
+    model = Source
+    template_name = "users/source_update_form.html"
+    fields = ['url', 'category', 'active', 'params', 'source_type']
+    success_url = reverse_lazy('profile')
+
 class SignUp(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('news')
