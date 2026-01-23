@@ -1,12 +1,12 @@
 from django.http import HttpResponseRedirect
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.views.generic.edit import FormMixin
 from users.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.models import User
 from feeds.forms import SourceForm
 from feeds.models import Source
 from django.urls import reverse_lazy
@@ -15,7 +15,7 @@ from django.urls import reverse_lazy
 
 class Profile(FormMixin, LoginRequiredMixin, TemplateView):
     form_class = SourceForm
-    template_name = 'registration/profile.html'
+    template_name = 'users/profile.html'
     success_url = reverse_lazy('profile')
 
     def form_valid(self, form):
@@ -58,7 +58,7 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
 class SignUp(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('news')
-    template_name = 'registration/signup.html' 
+    template_name = 'users/signup.html' 
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -68,27 +68,31 @@ class SignUp(CreateView):
         return response
 
 
+class Login(LoginView):
+    template_name = "users/login.html"
+
+
 class PasswordChange(PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy("password_change_done")
-    template_name = "registration/pwd_change.html"
+    template_name = "users/pwd_change.html"
 
 
 class PasswordChangeDone(PasswordChangeDoneView):
-    template_name = "registration/pwd_change_done.html"
+    template_name = "users/pwd_change_done.html"
 
 
 class PasswordReset(PasswordResetView):
-    template_name = "registration/pwd_reset_form.html"
+    template_name = "users/pwd_reset_form.html"
 
 
 class PasswordResetDone(PasswordResetDoneView):
-    template_name = "registration/pwd_reset_done.html"
+    template_name = "users/pwd_reset_done.html"
 
 
 class PasswordResetConfirm(PasswordResetConfirmView):   
-    template_name = "registration/pwd_reset_confirm.html"
+    template_name = "users/pwd_reset_confirm.html"
 
 
 class PasswordResetComplete(PasswordResetCompleteView):
-    template_name = "registration/pwd_reset_complete.html"
+    template_name = "users/pwd_reset_complete.html"
