@@ -19,7 +19,7 @@ class ArticleListView(ListView):
         if isinstance(user, AnonymousUser):
             return None
         slug = self.kwargs.get('slug', self.default_category)
-        qs = ArticleModel.objects.filter(source__in=user.usersettings.source.all())
+        qs = ArticleModel.objects.filter(source__in=user.usersettings.sources.all())
 
         #Search bar
         if 'search_bar' in self.request.GET:

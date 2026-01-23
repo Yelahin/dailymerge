@@ -21,7 +21,7 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
     def form_valid(self, form):
         source = form.save()
         user = self.request.user.usersettings
-        user.source.add(source)
+        user.sources.add(source)
         return HttpResponseRedirect(self.get_success_url())
     
     def post(self, request, *args, **kwargs):
@@ -29,7 +29,7 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
             source_id = request.POST.get('delete_source')
             try:
                 source_to_remove = Source.objects.get(id=source_id)
-                request.user.usersettings.source.remove(source_to_remove)
+                request.user.usersettings.sources.remove(source_to_remove)
             except Source.DoesNotExist:
                 pass
             return HttpResponseRedirect(self.get_success_url())
@@ -40,7 +40,7 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
             existing_source = Source.objects.filter(url=url).first()
             if existing_source:
                 # If source exists, just add it to the user's settings
-                request.user.usersettings.source.add(existing_source)
+                request.user.usersettings.sources.add(existing_source)
                 return HttpResponseRedirect(self.get_success_url())
 
         form = self.get_form()
@@ -51,7 +51,7 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         context = super().get_context_data(**kwargs)
-        context['sources'] = user.usersettings.source.all()
+        context['sources'] = user.usersettings.sources.all()
         return context
 
 
@@ -60,6 +60,7 @@ class SourceUpdate(UpdateView):
     template_name = "users/source_update_form.html"
     fields = ['url', 'category', 'active', 'params', 'source_type']
     success_url = reverse_lazy('profile')
+
 
 class SignUp(CreateView):
     form_class = UserCreationForm

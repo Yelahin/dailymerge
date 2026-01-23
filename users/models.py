@@ -9,7 +9,7 @@ from django.dispatch import receiver
 
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    source = models.ManyToManyField(Source, blank=True)
+    sources = models.ManyToManyField(Source, blank=True)
     
 
 @receiver(post_save, sender=User)
