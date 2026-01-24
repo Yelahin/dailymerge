@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from feeds.models import Source
+from feeds.models import Source, ArticleCategoryModel
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -10,6 +10,7 @@ from django.dispatch import receiver
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     sources = models.ManyToManyField(Source, blank=True)
+    categories = models.ManyToManyField(ArticleCategoryModel, blank=True)
     
 
 @receiver(post_save, sender=User)

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h2>Update Source</h2>
+        <h2>Add New Source</h2>
         <form method="post" class="auth-form">
             {% csrf_token %}
             {% for field in form %}
@@ -17,7 +17,7 @@
                 {% endif %}
             </div>
             {% endfor %}
-            <button type="submit" class="btn-primary">Update Source</button>
+            <button type="submit" class="btn-primary">Add Source</button>
             <a href="{% url 'profile' %}" class="btn-secondary"
                 style="text-align: center; display: block; margin-top: 1rem;">Cancel</a>
         </form>

@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 from django.db.models import Q
-from feeds.models import ArticleModel, ArticleCategoryModel
+from feeds.models import ArticleModel
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.shortcuts import redirect
@@ -44,7 +44,8 @@ class ArticleListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = ArticleCategoryModel.objects.all()
+        if not isinstance(self.request.user, AnonymousUser):
+            context['categories'] = self.request.user.usersettings.categories.all()
         return context
 
     def dispatch(self, request, *args, **kwargs):

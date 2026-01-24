@@ -13,16 +13,9 @@ from django.urls import reverse_lazy
 
 # Create your views here.
 
-class Profile(FormMixin, LoginRequiredMixin, TemplateView):
-    form_class = SourceForm
+class Profile(LoginRequiredMixin, TemplateView):
     template_name = 'users/profile.html'
     success_url = reverse_lazy('profile')
-
-    def form_valid(self, form):
-        source = form.save()
-        user = self.request.user.usersettings
-        user.sources.add(source)
-        return HttpResponseRedirect(self.get_success_url())
     
     def post(self, request, *args, **kwargs):
         if 'delete_source' in request.POST:
@@ -32,21 +25,7 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
                 request.user.usersettings.sources.remove(source_to_remove)
             except Source.DoesNotExist:
                 pass
-            return HttpResponseRedirect(self.get_success_url())
-
-        # Check if source with this URL already exists to avoid unique constraint error
-        if 'url' in request.POST:
-            url = request.POST.get('url')
-            existing_source = Source.objects.filter(url=url).first()
-            if existing_source:
-                # If source exists, just add it to the user's settings
-                request.user.usersettings.sources.add(existing_source)
-                return HttpResponseRedirect(self.get_success_url())
-
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        return self.form_invalid(form)
+            return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         user = self.request.user
@@ -54,6 +33,37 @@ class Profile(FormMixin, LoginRequiredMixin, TemplateView):
         context['sources'] = user.usersettings.sources.all()
         return context
 
+
+class SourceCreate(LoginRequiredMixin, CreateView):
+    model = Source
+    template_name = "users/source_create_form.html"
+    fields = ['url', 'category', 'active', 'params', 'source_type']
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        source = form.save()
+        user = self.request.user.usersettings
+        user.sources.add(source)
+        return HttpResponseRedirect(self.success_url)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+
+        form = self.get_form()
+        url = request.POST.get('url')
+        user_sources = request.user.usersettings.sources
+        existing_source = Source.objects.filter(url=url).first()
+        if existing_source:
+            if user_sources.filter(url=url).exists():
+                form.add_error('url', 'This source already exists in your list.')
+                return self.form_invalid(form)
+            user_sources.add(existing_source)
+            return HttpResponseRedirect(self.success_url)
+        
+        if form.is_valid():
+            return self.form_valid(form)
+        return self.form_invalid(form)
+        
 
 class SourceUpdate(UpdateView):
     model = Source
