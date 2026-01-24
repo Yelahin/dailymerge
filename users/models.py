@@ -9,8 +9,8 @@ from django.dispatch import receiver
 
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    sources = models.ManyToManyField(Source, blank=True)
-    categories = models.ManyToManyField(ArticleCategoryModel, blank=True)
+    sources = models.ManyToManyField(Source, blank=True, related_name="user_settings")
+    categories = models.ManyToManyField(ArticleCategoryModel, blank=True, related_name="user_settings")
     
 
 @receiver(post_save, sender=User)

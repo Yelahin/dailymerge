@@ -1,7 +1,7 @@
 {% extends "basic.html" %}
 
 {% block content %}
-<div class="profile-layout">
+<div class="profile-layout" style="grid-template-columns: 1fr 1fr 1fr;">
     <!-- Left Column: Profile Info -->
     <div class="profile-card">
         <h2>Profile</h2>
@@ -86,8 +86,62 @@
     </div>
 
     <!-- Right Column: Categories List -->
-    <div>
-        
+    <div class="sources-card">
+        <div class="sources-header">
+            <h3>My Categories</h3>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span class="source-count">{{ categories|length }}</span>
+                {% url 'category_create' as category_create_url %}
+                <a href="{% url 'category_create' %}">
+                    <button id="openAddCategoryModal" class="btn-icon-add" title="Add New Category">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14"></path>
+                            <path d="M5 12h14"></path>
+                        </svg>
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <div class="sources-list-container">
+            {% if categories %}
+            <ul class="sources-list">
+                {% for category in categories %}
+                <li class="source-item">
+                    <div class="source-info">
+                        <span class="source-url">{{ category.name }}</span>
+                    </div>
+                    <form method="POST" class="delete-source-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_articlecategorymodel" value="{{ category.id }}">
+                        {% url 'category_update' category.id as category_update_url %}
+                        <a href="{% url 'category_update' category.id %}" class="btn-update" title="Update category">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                            </svg>
+                        </a>
+                        <button type="submit" class="btn-delete" title="Remove category">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty-state">
+                <p>No categories.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 

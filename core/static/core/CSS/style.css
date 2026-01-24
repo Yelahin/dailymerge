@@ -23,8 +23,7 @@ a {
 
 /* Navigation */
 nav {
-    background: rgba(255, 255, 255, 0.95);
-    /* Static color */
+    background: var(--card-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
@@ -36,12 +35,6 @@ nav {
     flex-direction: column;
     gap: var(--spacing-sm);
     box-shadow: var(--shadow-sm);
-}
-
-@media (prefers-color-scheme: dark) {
-    nav {
-        background: rgba(30, 41, 59, 0.95);
-    }
 }
 
 .nav-top {
@@ -112,15 +105,13 @@ nav {
 .search-button {
     padding: 0.5rem 1.5rem;
     background-color: var(--primary-color);
-    color: white;
+    color: var(--card-bg);
     border: none;
     border-radius: 50px;
-    /* Fully rounded button inside the pill */
     cursor: pointer;
     font-weight: 500;
     transition: background-color var(--transition-speed);
     margin: 1px;
-    /* visual separation */
 }
 
 .search-button:hover {
@@ -312,7 +303,7 @@ main {
     border-radius: var(--radius-md);
     outline: none;
     transition: all 0.2s ease-in-out;
-    background-color: transparent;
+    background-color: var(--card-bg);
     font-size: 1rem;
     color: var(--text-main);
 }
@@ -326,7 +317,7 @@ main {
 .auth-container button {
     width: 100%;
     background-color: var(--primary-color);
-    color: white;
+    color: var(--card-bg);
     padding: 0.875rem;
     border: none;
     border-radius: var(--radius-md);
@@ -353,14 +344,14 @@ main {
     padding: 0;
     margin-bottom: 1.5rem;
     text-align: left;
-    background-color: #fef2f2;
-    border: 1px solid #fee2e2;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 1rem;
 }
 
 .error-list li {
-    color: #ef4444;
+    color: var(--danger-color);
     font-size: 0.9rem;
     display: flex;
     align-items: center;
@@ -487,7 +478,7 @@ main {
 
 .btn-signup {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--card-bg);
     box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
 }
 
@@ -538,15 +529,13 @@ main {
 /* Common Card Style */
 .profile-card,
 .sources-card {
-    background-color: var(--surface-card, #ffffff);
-    border: 1px solid var(--border-color, #e2e8f0);
-    border-radius: var(--radius-md, 12px);
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
     height: 100%;
-    /* Fill the grid area */
     box-sizing: border-box;
-    /* Ensure padding is included */
     display: flex;
     flex-direction: column;
 }
@@ -593,7 +582,7 @@ main {
 }
 
 .btn-secondary:hover {
-    background-color: #f1f5f9;
+    background-color: var(--bg-color);
     text-decoration: none;
 }
 
@@ -601,7 +590,7 @@ main {
     background: none;
     border: none;
     padding: 0;
-    color: var(--danger-color, #ef4444);
+    color: var(--danger-color);
     cursor: pointer;
     text-decoration: underline;
     font-size: 0.9rem;
@@ -613,20 +602,20 @@ main {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
-    border-bottom: 2px solid var(--border-color, #f1f5f9);
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.75rem;
 }
 
 .sources-header h3 {
     font-size: 1.25rem;
-    color: var(--text-primary, #1e293b);
+    color: var(--text-primary);
     margin: 0;
     font-weight: 700;
 }
 
 .source-count {
-    background-color: var(--primary-color-light, #eff6ff);
-    color: var(--primary-color, #3b82f6);
+    background-color: var(--primary-color-light);
+    color: var(--primary-color);
     padding: 0.15rem 0.6rem;
     border-radius: 9999px;
     font-size: 0.8rem;
@@ -636,11 +625,10 @@ main {
 /* Compact List Container */
 .sources-list-container {
     height: 250px;
-    /* Smaller fixed height */
     overflow-y: auto;
-    border-radius: var(--radius-sm, 6px);
-    background-color: var(--surface-ground, #f8fafc);
-    border: 1px solid var(--border-color, #f1f5f9);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-ground);
+    border: 1px solid var(--border-color);
     scrollbar-gutter: stable;
 }
 
@@ -654,7 +642,7 @@ main {
 }
 
 .sources-list-container::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
+    background-color: var(--text-muted);
     border-radius: 20px;
 }
 
@@ -669,7 +657,7 @@ main {
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border-color, #f1f5f9);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .source-item:last-child {
@@ -677,7 +665,7 @@ main {
 }
 
 .source-item:hover {
-    background-color: #f1f5f9;
+    background-color: var(--bg-color);
 }
 
 .source-info {
@@ -691,7 +679,7 @@ main {
 .source-url {
     font-size: 0.95rem;
     font-weight: 500;
-    color: var(--text-primary, #334155);
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -699,7 +687,7 @@ main {
 
 .source-category {
     font-size: 0.75rem;
-    color: var(--text-secondary, #94a3b8);
+    color: var(--text-secondary);
     margin-top: 0.2rem;
 }
 
@@ -707,28 +695,27 @@ main {
 .btn-update {
     background: none;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     cursor: pointer;
     opacity: 0.5;
     transition: all 0.2s;
     padding: 0.5rem;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    /* For the anchor tag */
 }
 
 .btn-delete:hover {
-    color: var(--danger-color, #ef4444);
-    background-color: #fee2e2;
+    color: var(--danger-color);
+    background-color: var(--bg-color);
     transform: scale(1.1);
 }
 
 .btn-update:hover {
-    color: var(--primary-color, #3b82f6);
-    background-color: #e0f2fe;
+    color: var(--primary-color);
+    background-color: var(--bg-color);
     transform: scale(1.1);
 }
 
@@ -740,7 +727,7 @@ main {
 .empty-state {
     padding: 2rem;
     text-align: center;
-    color: var(--text-secondary, #94a3b8);
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
@@ -759,8 +746,8 @@ main {
 
 /* Button styles for the header button */
 .btn-icon-add {
-    background: var(--primary-color, #3b82f6);
-    color: white;
+    background: var(--primary-color);
+    color: var(--card-bg);
     border: none;
     border-radius: 50%;
     width: 32px;
@@ -774,7 +761,7 @@ main {
 }
 
 .btn-icon-add:hover {
-    background-color: var(--primary-color-dark, #2563eb);
+    background-color: var(--primary-color-dark);
     transform: scale(1.05);
 }
 
@@ -795,13 +782,13 @@ main {
 }
 
 .auth-card {
-    background-color: var(--surface-card, #ffffff);
+    background-color: var(--surface-card);
     padding: 2.5rem;
-    border-radius: var(--radius-md, 12px);
+    border-radius: var(--radius-md);
     width: 100%;
     max-width: 450px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--border-color, #e2e8f0);
+    border: 1px solid var(--border-color);
 }
 
 .auth-card h2 {
@@ -826,7 +813,7 @@ main {
 
 .auth-form .form-group label {
     font-weight: 500;
-    color: var(--text-secondary, #475569);
+    color: var(--text-secondary);
     font-size: 0.95rem;
 }
 
@@ -835,11 +822,12 @@ main {
 .auth-form .form-group select,
 .auth-form .form-group textarea {
     padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color, #cbd5e1);
-    border-radius: var(--radius-sm, 6px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     transition: all 0.2s;
-    background-color: var(--surface-ground, #f8fafc);
+    background-color: var(--card-bg);
+    color: var(--text-main);
     width: 100%;
     box-sizing: border-box;
 }
@@ -848,9 +836,9 @@ main {
 .auth-form .form-group select:focus,
 .auth-form .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary-color, #3b82f6);
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    background-color: #fff;
+    background-color: var(--card-bg);
 }
 
 .auth-form .form-group input[type="checkbox"] {
@@ -867,17 +855,17 @@ main {
 }
 
 .auth-form .error-text {
-    color: var(--danger-color, #ef4444);
+    color: var(--danger-color);
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }
 
 .btn-primary {
-    background-color: var(--primary-color, #3b82f6);
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--card-bg);
     padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: var(--radius-sm, 6px);
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -886,7 +874,7 @@ main {
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-color-dark, #2563eb);
+    background-color: var(--primary-color-dark);
 }
 
 .btn-primary:active {
