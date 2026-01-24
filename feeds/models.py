@@ -1,11 +1,10 @@
 from django.db import models
-from django.template.defaultfilters import slugify
 
 # Create your models here.
 
 class ArticleCategoryModel(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField()
+    name = models.CharField(max_length=100, unique=False)
+    slug = models.SlugField(unique=False)
 
     def __str__(self):
         return self.name
@@ -16,10 +15,10 @@ class Source(models.Model):
         RSS = "RSS", "RSS"
         API = "API", "API"
 
-    url = models.URLField(max_length=500, unique=True)
+    url = models.URLField(max_length=500, unique=False)
     category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
-    params = models.JSONField(blank=True, null=True)
+    params = models.JSONField(blank=True, default=dict)
     source_type = models.CharField(max_length=10, choices=SourceType.choices)
 
 

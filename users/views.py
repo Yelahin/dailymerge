@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from users.forms import UserCreationForm
-from users.mixins import AddUserSettingsMixin
+from users.mixins import AddUserSettingsMixin, UpdateUserSettingsMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -52,7 +52,7 @@ class SourceCreate(AddUserSettingsMixin):
     template_name = "users/source_create_form.html"
     success_url = reverse_lazy('profile')
     setting_field = 'sources'
-    filter_field = 'url'
+    filter_fields = ['url']
 
     def get_form(self, form_class=None):
         """Pass usersettings to form class"""
@@ -61,11 +61,12 @@ class SourceCreate(AddUserSettingsMixin):
         return form_class(**self.get_form_kwargs(), user_settings=user_settings)
 
         
-class SourceUpdate(UpdateView):
+class SourceUpdate(LoginRequiredMixin, UpdateUserSettingsMixin):
     model = Source
     template_name = "users/source_update_form.html"
     fields = ['url', 'category', 'active', 'params', 'source_type']
     success_url = reverse_lazy('profile')
+    setting_field = "sources"
 
 
 class CategoryCreate(AddUserSettingsMixin):
@@ -74,14 +75,17 @@ class CategoryCreate(AddUserSettingsMixin):
     fields = ['name', 'slug']
     success_url = reverse_lazy('profile')
     setting_field = 'categories'
-    filter_field = 'slug'
+    filter_fields = ['name', 'slug']
+    user_unique_fields = ['name', 'slug']
 
 
-class CategoryUpdate(UpdateView):
+class CategoryUpdate(LoginRequiredMixin, UpdateUserSettingsMixin):
     model = ArticleCategoryModel
     template_name = "users/category_update_form.html"
     fields = ['name']
     success_url = reverse_lazy('profile')
+    setting_field = "categories"
+    not_editable_field = "slug"
 
 
 class SignUp(CreateView):
