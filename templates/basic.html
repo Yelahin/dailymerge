@@ -41,6 +41,12 @@
             {% endif %}
         </div>
         <div class="nav-bottom">
+            <div class="nav-favorites">
+                <a href="{% url 'favorite' %}"
+                    class="fav-link {% if 'favorite' in request.path and not request.GET.search %}active{% endif %}">
+                    <span>★</span> Favorites
+                </a>
+            </div>
             <div class="nav-links">
                 {% for category in categories %}
                 <a href="{% url 'filtered_news' category.slug %}"

@@ -46,6 +46,7 @@ class ArticleListView(ListView):
         context = super().get_context_data(**kwargs)
         if not isinstance(self.request.user, AnonymousUser):
             context['categories'] = self.request.user.usersettings.categories.all()
+            context['favorite_article_ids'] = list(self.request.user.usersettings.favorite_articles.values_list('id', flat=True))
         return context
 
     def dispatch(self, request, *args, **kwargs):

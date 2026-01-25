@@ -28,7 +28,7 @@ class ArticleModel(models.Model):
     published = models.DateTimeField()
     summary = models.TextField()
     image_url = models.URLField(max_length=500)
-    source = models.ForeignKey(Source, on_delete=models.CASCADE)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE, related_name="articles")
 
     @property
     def category(self):

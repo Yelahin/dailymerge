@@ -1,18 +1,18 @@
-from django.http import HttpResponseRedirect
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.http import HttpResponseRedirect, JsonResponse
+from django.views.generic import CreateView, TemplateView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from users.forms import UserCreationForm
-from users.mixins import AddUserSettingsMixin, UpdateUserSettingsMixin
+from users.mixins import AddUserSettingsMixin, UpdateUserSettingsMixin, GetContextDataMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView
 from django.contrib.auth.forms import PasswordChangeForm
-from feeds.models import Source, ArticleCategoryModel
+from feeds.models import Source, ArticleCategoryModel, ArticleModel
 from feeds.forms import SourceCreateForm
 from django.urls import reverse_lazy
 
 # Create your views here.
 
-class Profile(LoginRequiredMixin, TemplateView):
+class Profile(GetContextDataMixin, LoginRequiredMixin, TemplateView):
     template_name = 'users/profile.html'
     success_url = reverse_lazy('profile')
 
@@ -42,11 +42,39 @@ class Profile(LoginRequiredMixin, TemplateView):
         usersettings = self.request.user.usersettings
         context = super().get_context_data(**kwargs)
         context['sources'] = usersettings.sources.all()
-        context['categories'] = usersettings.categories.all()
         return context
 
 
-class SourceCreate(AddUserSettingsMixin):
+class FavoriteArticles(LoginRequiredMixin, GetContextDataMixin, ListView):
+    model = ArticleModel
+    template_name = "users/favorite.html"
+    context_object_name = "articles"
+
+    def get_queryset(self):
+        print("FavoriteArticles view is called")  # Debug
+        user = self.request.user
+        queryset = user.usersettings.favorite_articles.all()
+        return queryset
+
+
+class ToggleFavorite(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        article_id = kwargs.get('pk')
+        try:
+            article = ArticleModel.objects.get(id=article_id)
+            user_settings = request.user.usersettings
+            if article in user_settings.favorite_articles.all():
+                user_settings.favorite_articles.remove(article)
+                is_favorite = False
+            else:
+                user_settings.favorite_articles.add(article)
+                is_favorite = True
+            return JsonResponse({'status': 'success', 'is_favorite': is_favorite})
+        except ArticleModel.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Article not found'}, status=404)
+
+
+class SourceCreate(GetContextDataMixin, AddUserSettingsMixin):
     model = Source
     form_class = SourceCreateForm
     template_name = "users/source_create_form.html"
@@ -61,7 +89,7 @@ class SourceCreate(AddUserSettingsMixin):
         return form_class(**self.get_form_kwargs(), user_settings=user_settings)
 
         
-class SourceUpdate(LoginRequiredMixin, UpdateUserSettingsMixin):
+class SourceUpdate(GetContextDataMixin, LoginRequiredMixin, UpdateUserSettingsMixin):
     model = Source
     template_name = "users/source_update_form.html"
     fields = ['url', 'category', 'active', 'params', 'source_type']
@@ -69,7 +97,7 @@ class SourceUpdate(LoginRequiredMixin, UpdateUserSettingsMixin):
     setting_field = "sources"
 
 
-class CategoryCreate(AddUserSettingsMixin):
+class CategoryCreate(GetContextDataMixin, AddUserSettingsMixin):
     model = ArticleCategoryModel
     template_name = "users/category_create_form.html"
     fields = ['name', 'slug']
@@ -79,13 +107,14 @@ class CategoryCreate(AddUserSettingsMixin):
     user_unique_fields = ['name', 'slug']
 
 
-class CategoryUpdate(LoginRequiredMixin, UpdateUserSettingsMixin):
+class CategoryUpdate(GetContextDataMixin, LoginRequiredMixin, UpdateUserSettingsMixin):
     model = ArticleCategoryModel
     template_name = "users/category_update_form.html"
     fields = ['name']
     success_url = reverse_lazy('profile')
     setting_field = "categories"
     not_editable_field = "slug"
+    
 
 
 class SignUp(CreateView):
@@ -105,13 +134,13 @@ class Login(LoginView):
     template_name = "users/login.html"
 
 
-class PasswordChange(PasswordChangeView):
+class PasswordChange(GetContextDataMixin, PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy("password_change_done")
     template_name = "users/pwd_change.html"
 
 
-class PasswordChangeDone(PasswordChangeDoneView):
+class PasswordChangeDone(GetContextDataMixin, PasswordChangeDoneView):
     template_name = "users/pwd_change_done.html"
 
 
