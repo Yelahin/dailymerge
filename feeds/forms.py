@@ -1,7 +1,7 @@
 from django import forms
 from feeds.models import Source
 
-class SourceCreateForm(forms.ModelForm):
+class SourceForm(forms.ModelForm):
     class Meta:
         model = Source 
         fields = ['url', 'category', 'active', 'params', 'source_type']

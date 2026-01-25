@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.db import models
+from feeds.models import ArticleCategoryModel
 
 class AddUserSettingsMixin(LoginRequiredMixin, CreateView):
     """Set up UserSettings objects"""
@@ -73,26 +73,32 @@ class UpdateUserSettingsMixin(UpdateView):
             
             # Check if an identical object already exists
             existing_obj = self.model.objects.filter(**form.cleaned_data).first()
+            current_obj = self.object
             if existing_obj:
                 # If it exists, delete current object and use the existing one
-                current_obj = self.get_object()
                 user_setting.remove(current_obj)
+
+                if isinstance(current_obj, ArticleCategoryModel):
+                    current_obj.sources.update(category=existing_obj)
+
                 if current_obj.user_settings.count() == 0:
                     current_obj.delete()
                 user_setting.add(existing_obj)
                 return HttpResponseRedirect(self.success_url)
             
-            obj = self.get_object()
             # If this object is shared by multiple users, create a new copy
-            if obj.user_settings.count() > 1:
+            if current_obj.user_settings.count() > 1:
                 if self.not_editable_field:
-                    field_value = getattr(obj, self.not_editable_field)
-                    form.changed_data[self.not_editable_field] = field_value
+                    field_value = getattr(current_obj, self.not_editable_field)
+                    form.cleaned_data[self.not_editable_field] = field_value
                 
                 new_obj = self.model.objects.create(**form.cleaned_data)
+
+                if isinstance(current_obj, ArticleCategoryModel):
+                    self.request.user.usersettings.sources.filter(category=current_obj).update(category=new_obj)
                 
                 # Replace the old object with the new one for this user
-                user_setting.remove(obj)
+                user_setting.remove(current_obj)
                 user_setting.add(new_obj)
                 return HttpResponseRedirect(self.success_url)
             else:

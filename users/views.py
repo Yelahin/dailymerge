@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView
 from django.contrib.auth.forms import PasswordChangeForm
 from feeds.models import Source, ArticleCategoryModel, ArticleModel
-from feeds.forms import SourceCreateForm
+from feeds.forms import SourceForm
 from django.urls import reverse_lazy
 
 # Create your views here.
@@ -76,11 +76,11 @@ class ToggleFavorite(LoginRequiredMixin, View):
 
 class SourceCreate(GetContextDataMixin, AddUserSettingsMixin):
     model = Source
-    form_class = SourceCreateForm
+    form_class = SourceForm
     template_name = "users/source_create_form.html"
     success_url = reverse_lazy('profile')
     setting_field = 'sources'
-    filter_fields = ['url']
+    filter_fields = ['url', 'category']
 
     def get_form(self, form_class=None):
         """Pass usersettings to form class"""
@@ -91,10 +91,15 @@ class SourceCreate(GetContextDataMixin, AddUserSettingsMixin):
         
 class SourceUpdate(GetContextDataMixin, LoginRequiredMixin, UpdateUserSettingsMixin):
     model = Source
+    form_class = SourceForm
     template_name = "users/source_update_form.html"
-    fields = ['url', 'category', 'active', 'params', 'source_type']
     success_url = reverse_lazy('profile')
     setting_field = "sources"
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        user_settings = self.request.user.usersettings
+        return form_class(**self.get_form_kwargs(), user_settings=user_settings)
 
 
 class CategoryCreate(GetContextDataMixin, AddUserSettingsMixin):
@@ -115,7 +120,6 @@ class CategoryUpdate(GetContextDataMixin, LoginRequiredMixin, UpdateUserSettings
     setting_field = "categories"
     not_editable_field = "slug"
     
-
 
 class SignUp(CreateView):
     form_class = UserCreationForm
