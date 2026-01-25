@@ -41,12 +41,14 @@
             {% endif %}
         </div>
         <div class="nav-bottom">
+            {% if request.user.is_authenticated %}
             <div class="nav-favorites">
                 <a href="{% url 'favorite' %}"
                     class="fav-link {% if 'favorite' in request.path and not request.GET.search %}active{% endif %}">
                     <span>★</span> Favorites
                 </a>
             </div>
+            {% endif %}
             <div class="nav-links">
                 {% for category in categories %}
                 <a href="{% url 'filtered_news' category.slug %}"
