@@ -31,6 +31,5 @@ class ActivateMixin:
 
 @admin.register(Source)
 class SourceAdmin(admin.ModelAdmin):
-    list_display = ['url', 'category', 'active']
+    list_display = ['url']
     list_display_links = ['url']
-    ordering = ['category']

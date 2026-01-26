@@ -15,10 +15,7 @@ class Source(models.Model):
         RSS = "RSS", "RSS"
         API = "API", "API"
 
-    url = models.URLField(max_length=500, unique=False)
-    category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE, related_name="sources")
-    active = models.BooleanField(default=True)
-    params = models.JSONField(blank=True, default=dict)
+    url = models.URLField(max_length=500)
     source_type = models.CharField(max_length=10, choices=SourceType.choices)
 
 

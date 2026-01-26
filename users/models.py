@@ -7,9 +7,21 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+
+class UserSource(models.Model):
+    usersettings = models.ForeignKey("UserSettings", on_delete=models.CASCADE)
+    source = models.ForeignKey(Source, on_delete=models.CASCADE)
+    category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE, related_name="sources")
+    active = models.BooleanField(default=True)
+    params = models.JSONField(default=dict)
+
+    class Meta:
+        unique_together = ('usersettings', 'source')
+
+
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    sources = models.ManyToManyField(Source, blank=True, related_name="user_settings")
+    sources = models.ManyToManyField(Source, through=UserSource, blank=True, related_name="user_settings")
     categories = models.ManyToManyField(ArticleCategoryModel, blank=True, related_name="user_settings")
     favorite_articles = models.ManyToManyField(ArticleModel, blank=True, related_name="user_settings")
     
