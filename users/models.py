@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from feeds.models import Source, ArticleCategoryModel, ArticleModel
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import datetime
+
 
 
 # Create your models here.
@@ -30,6 +32,7 @@ class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     sources = models.ManyToManyField(Source, through=UserSource, blank=True)
     categories = models.ManyToManyField(ArticleCategoryModel, through=UserCategory, blank=True)
+    article_duration = models.DurationField(default=datetime.timedelta(days=7))
     favorite_articles = models.ManyToManyField(ArticleModel, blank=True)
     
 

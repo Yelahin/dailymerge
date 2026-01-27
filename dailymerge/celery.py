@@ -6,12 +6,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dailymerge.settings')
 
 app = Celery('dailymerge')
 
-published_condition = 1
+published_condition = 365
 
 app.conf.beat_schedule = {
     "upload-data": {
         "task": "feeds.tasks.upload_data",
-        "schedule": crontab(minute="*"),
+        "schedule": 5,
         "args": (published_condition, )
     },
     "remove-data": {

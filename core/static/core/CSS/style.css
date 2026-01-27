@@ -1007,3 +1007,107 @@ main {
 .search-button:hover {
     background-color: var(--primary-hover);
 }
+
+/* Duration Settings Form */
+.settings-form-container {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.duration-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background-color: var(--bg-color);
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    width: fit-content;
+    margin: 0.5rem auto 0;
+}
+
+.duration-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.duration-input-group label {
+    font-weight: 700;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    user-select: none;
+}
+
+.input-duration-small {
+    width: 32px;
+    padding: 0.1rem 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: transparent;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.input-duration-small:focus {
+    background-color: var(--card-bg);
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.input-duration-small:hover {
+    background-color: var(--card-bg);
+}
+
+.duration-separator {
+    color: var(--border-color);
+    font-weight: 300;
+    font-size: 1rem;
+    user-select: none;
+}
+
+.btn-save-settings {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 0.25rem;
+    flex-shrink: 0;
+}
+
+.btn-save-settings:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+.btn-save-settings svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 3;
+}
+
+/* Hide spin buttons for duration inputs */
+.input-duration-small::-webkit-outer-spin-button,
+.input-duration-small::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-duration-small[type=number] {
+    -moz-appearance: textfield;
+}

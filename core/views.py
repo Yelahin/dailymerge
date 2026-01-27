@@ -2,8 +2,9 @@ from django.views.generic.list import ListView
 from django.db.models import Q
 from feeds.models import ArticleModel
 from django.contrib.auth.models import AnonymousUser
-from django.core.cache import cache
 from django.shortcuts import redirect
+from django.utils import timezone
+import datetime
 
 # Create your views here.
 
@@ -19,9 +20,11 @@ class ArticleListView(ListView):
         if isinstance(user, AnonymousUser):
             return None
         slug = self.kwargs.get('slug', self.default_category)
+        expiring_date = timezone.now() - user.usersettings.article_duration
         qs = ArticleModel.objects.filter(
             source__usersource__usersettings=user.usersettings,
             source__usersource__active=True,
+            published__gt=expiring_date,
         )
 
         #Search bar

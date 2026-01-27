@@ -1,15 +1,15 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.forms import UserCreationForm
+from users.forms import UserCreationForm, UserSettingsForm
 from users.mixins import GetContextDataMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView
 from django.contrib.auth.forms import PasswordChangeForm
 from feeds.models import Source, ArticleCategoryModel, ArticleModel
 from feeds.forms import SourceForm
-from django.urls import reverse_lazy
-from users.models import UserSource, UserCategory
+from django.urls import reverse, reverse_lazy
+from users.models import UserSource, UserCategory, UserSettings
 
 # Create your views here.
 
@@ -78,11 +78,23 @@ class Profile(GetContextDataMixin, LoginRequiredMixin, TemplateView):
         if 'delete_articlecategorymodel' in request.POST:
             return self.check_delete(request, ArticleCategoryModel)
         
+        if any(field in request.POST for field in ['days', 'hours', 'minutes']):
+            usersettings = request.user.usersettings
+            form = UserSettingsForm(request.POST, instance=usersettings)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(self.success_url)
+            else:
+                context = self.get_context_data()
+                context['settings_form'] = form
+                return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         usersettings = self.request.user.usersettings
         sources = usersettings.sources.all()
         context = super().get_context_data(**kwargs)
         context['sources'] = UserSource.objects.filter(source__in=sources, usersettings=usersettings).distinct()
+        context['settings_form'] = UserSettingsForm(instance=usersettings)
         return context
 
 
@@ -159,6 +171,7 @@ class UserSourceCreateView(GetContextDataMixin, LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
     """
+
 
 class UserSourceUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
     model = UserSource
