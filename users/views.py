@@ -104,7 +104,6 @@ class FavoriteArticles(LoginRequiredMixin, GetContextDataMixin, ListView):
     context_object_name = "articles"
 
     def get_queryset(self):
-        print("FavoriteArticles view is called")  # Debug
         user = self.request.user
         queryset = user.usersettings.favorite_articles.all()
         return queryset
