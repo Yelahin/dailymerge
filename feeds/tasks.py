@@ -13,7 +13,7 @@ def remove_data(published_condition: int):
 #upload data to db
 @shared_task
 def upload_data(published_condition: int):
-    sources = Source.objects.filter(active=True)
+    sources = Source.objects.all()
     normalized_data = get_normalized_data(sources)
 
     existing_links = set(ArticleModel.objects.values_list('link', flat=True))

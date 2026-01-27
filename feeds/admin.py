@@ -5,7 +5,7 @@ from feeds.models import ArticleModel, ArticleCategoryModel, Source
 
 @admin.register(ArticleModel)
 class ArticleModelAdmin(admin.ModelAdmin):
-    list_display = ['title', 'published', 'category']
+    list_display = ['title', 'published']
     list_display_links = ['title']
     ordering = ['published']
 

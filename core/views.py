@@ -19,7 +19,10 @@ class ArticleListView(ListView):
         if isinstance(user, AnonymousUser):
             return None
         slug = self.kwargs.get('slug', self.default_category)
-        qs = ArticleModel.objects.filter(source__in=user.usersettings.sources.all())
+        qs = ArticleModel.objects.filter(
+            source__usersource__usersettings=user.usersettings,
+            source__usersource__active=True,
+        )
 
         #Search bar
         if 'search_bar' in self.request.GET:
@@ -30,23 +33,15 @@ class ArticleListView(ListView):
             queryset = qs.filter(query)
         #Categories
         else:
-            #Caching for default category
-            if slug == self.default_category:
-                queryset = cache.get_or_set(
-                    f'article_source_category_{self.request.user.id}',
-                    qs.filter(source__category__slug=slug),
-                    30,
-                )
-            #Not default category
-            else:
-                queryset = qs.filter(source__category__slug=slug)
-        return queryset.order_by("-published")
+            queryset = qs.filter(source__usersource__category__slug=slug)
+        return queryset.order_by("-published").distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if not isinstance(self.request.user, AnonymousUser):
-            context['categories'] = self.request.user.usersettings.categories.all()
-            context['favorite_article_ids'] = list(self.request.user.usersettings.favorite_articles.values_list('id', flat=True))
+            usersettings = self.request.user.usersettings
+            context['categories'] = usersettings.categories.all()
+            context['favorite_article_ids'] = list(usersettings.favorite_articles.values_list('id', flat=True))
         return context
 
     def dispatch(self, request, *args, **kwargs):

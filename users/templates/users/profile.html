@@ -42,7 +42,7 @@
                 {% for source in sources %}
                 <li class="source-item">
                     <div class="source-info">
-                        <span class="source-url" title="{{ source.url }}">{{ source.url }}</span>
+                        <span class="source-url" title="{{ source.url }}">{{ source.source.url }}</span>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span class="source-category">{{ source.category }}</span>
                             {% if source.active %}
@@ -56,7 +56,7 @@
                     </div>
                     <form method="POST" class="delete-source-form">
                         {% csrf_token %}
-                        <input type="hidden" name="delete_source" value="{{ source.id }}">
+                        <input type="hidden" name="delete_source" value="{{ source.source.id }}">
                         <a href="{% url 'source_update' source.id %}" class="btn-update" title="Update source">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

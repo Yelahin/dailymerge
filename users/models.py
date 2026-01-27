@@ -7,23 +7,30 @@ from django.dispatch import receiver
 
 # Create your models here.
 
-
 class UserSource(models.Model):
     usersettings = models.ForeignKey("UserSettings", on_delete=models.CASCADE)
     source = models.ForeignKey(Source, on_delete=models.CASCADE)
     category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE, related_name="sources")
     active = models.BooleanField(default=True)
-    params = models.JSONField(default=dict)
+    params = models.JSONField(null=True, blank=True)
 
     class Meta:
-        unique_together = ('usersettings', 'source')
+        unique_together = ('usersettings', 'source', 'category')
+
+
+class UserCategory(models.Model):
+    usersettings = models.ForeignKey("UserSettings", on_delete=models.CASCADE)
+    category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('usersettings', 'category')
 
 
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    sources = models.ManyToManyField(Source, through=UserSource, blank=True, related_name="user_settings")
-    categories = models.ManyToManyField(ArticleCategoryModel, blank=True, related_name="user_settings")
-    favorite_articles = models.ManyToManyField(ArticleModel, blank=True, related_name="user_settings")
+    sources = models.ManyToManyField(Source, through=UserSource, blank=True)
+    categories = models.ManyToManyField(ArticleCategoryModel, through=UserCategory, blank=True)
+    favorite_articles = models.ManyToManyField(ArticleModel, blank=True)
     
 
 @receiver(post_save, sender=User)

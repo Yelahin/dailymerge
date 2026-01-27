@@ -18,6 +18,9 @@ class Source(models.Model):
     url = models.URLField(max_length=500)
     source_type = models.CharField(max_length=10, choices=SourceType.choices)
 
+    class Meta:
+        unique_together = ('url', 'source_type')
+
 
 class ArticleModel(models.Model):
     title = models.CharField(max_length=500)
@@ -26,11 +29,4 @@ class ArticleModel(models.Model):
     summary = models.TextField()
     image_url = models.URLField(max_length=500)
     source = models.ForeignKey(Source, on_delete=models.CASCADE, related_name="articles")
-
-    @property
-    def category(self):
-        return self.source.category
-
-    def __str__(self):
-        return self.title
     
