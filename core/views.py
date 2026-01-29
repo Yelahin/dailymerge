@@ -20,6 +20,7 @@ class ArticleListView(ListView):
         if isinstance(user, AnonymousUser):
             return None
 
+        # Return users articles that active and pass expiring date
         expiring_date = timezone.now() - user.usersettings.article_duration
         qs = ArticleModel.objects.filter(
             source__usersource__usersettings=user.usersettings,
@@ -32,13 +33,19 @@ class ArticleListView(ListView):
             search_terms = self.request.GET['search_bar'].split()
             query = Q()
             for term in search_terms:
-                query &= Q(title__icontains=term) | Q(summary__icontains=term)
+                # Add articles that use terms in fields below
+                query &= (Q(title__icontains=term) | 
+                          Q(summary__icontains=term) | 
+                          Q(source__usersource__category__name=term) |
+                          Q(source__usersource__category__slug=term))
             queryset = qs.filter(query)
         #Categories
         else:
+            # Return category by slug
             slug = self.kwargs.get('slug')
             if slug:
                 queryset = qs.filter(source__usersource__category__slug=slug, source__usersource__usersettings=user.usersettings)
+            # Return users favorite articles if there is no slug
             else:
                 query = user.usersettings.favorite_articles.all()
 
@@ -54,8 +61,10 @@ class ArticleListView(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         if not self.kwargs.get('slug'):
+            # Redirect user to favorite articles if user logged in
             if not isinstance(self.request.user, AnonymousUser):
                 return redirect('favorite')
+            # Redirect user to login if user isn't logged in 
             return redirect('login')
         return super().dispatch(request, *args, **kwargs)
     
