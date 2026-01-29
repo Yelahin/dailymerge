@@ -11,6 +11,7 @@ class SourceForm(forms.ModelForm):
         fields = ['category', 'params', 'active']
 
     def __init__(self, *args, **kwargs):
+        # Add only users categories
         self.usersettings = kwargs.pop('usersettings', None)
         super().__init__(*args, **kwargs)
         self.fields['category'].queryset = self.usersettings.categories.all()
@@ -28,17 +29,14 @@ class SourceForm(forms.ModelForm):
             url=self.cleaned_data['url'],
             source_type=self.cleaned_data['source_type'],
         )
-        # Set Source object for UserSource object
+        # Set Source object for UserSource object and set the usersettings
         usersource.source = source
-
-        # If create object operation
-        if not usersource.pk:
-            usersource.usersettings = self.usersettings
+        usersource.usersettings = self.usersettings
         
         if commit:
             usersource.save()
 
-            # Check if method == update and source was changed
+            # Check if method is update method and source was changed
             if old_source and old_source != source:
                 # Delete source if nobody use it
                 if not UserSource.objects.filter(source=old_source).exists():

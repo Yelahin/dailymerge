@@ -21,7 +21,7 @@ class UserCreationForm(UserCreationForm):
 
 
 class UserArticleDurationForm(forms.ModelForm):
-    days = forms.IntegerField(min_value=0, initial=0, widget=forms.NumberInput(attrs={'class': 'input-duration-small'}))
+    days = forms.IntegerField(min_value=0, max_value=999, initial=0, widget=forms.NumberInput(attrs={'class': 'input-duration-small'}))
     hours = forms.IntegerField(min_value=0, max_value=23, initial=0, widget=forms.NumberInput(attrs={'class': 'input-duration-small'}))
     minutes = forms.IntegerField(min_value=0, max_value=59, initial=0, widget=forms.NumberInput(attrs={'class': 'input-duration-small'}))
 
@@ -33,6 +33,7 @@ class UserArticleDurationForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        # Set users settings in form fields
         super().__init__(*args, **kwargs)
         duration = self.instance.article_duration
         self.fields['days'].initial = duration.days
