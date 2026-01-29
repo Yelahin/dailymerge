@@ -60,11 +60,15 @@ class ArticleListView(ListView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        if not self.kwargs.get('slug'):
-            # Redirect user to favorite articles if user logged in
-            if not isinstance(self.request.user, AnonymousUser):
-                return redirect('favorite')
-            # Redirect user to login if user isn't logged in 
+        # Redirect user to login page if user isn't logged in
+        if isinstance(self.request.user, AnonymousUser):
             return redirect('login')
-        return super().dispatch(request, *args, **kwargs)
+        
+        # Redirect user to page with articles of chosen category
+        if self.kwargs.get('slug'):
+            return super().dispatch(request, *args, **kwargs)
+        
+        # Redirect logged user to page with favorite articles
+        else:
+            return redirect('favorite')
     
