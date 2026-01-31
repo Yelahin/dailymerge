@@ -9,13 +9,13 @@ app = Celery('dailymerge')
 published_condition = 365
 
 app.conf.beat_schedule = {
-    "upload-data": {
-        "task": "feeds.tasks.upload_data",
+    "upload-articles": {
+        "task": "feeds.tasks.upload_articles",
         "schedule": 5,
         "args": (published_condition, )
     },
-    "remove-data": {
-        "task": "feeds.tasks.remove_data",
+    "remove-expired-articles": {
+        "task": "feeds.tasks.remove_expired_articles",
         "schedule": 5,
         "args": (published_condition, )
     },

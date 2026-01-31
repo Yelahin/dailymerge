@@ -6,13 +6,13 @@ from .utils import get_normalized_data, filter_normalized_data
 
 #remove data from db
 @shared_task
-def remove_data(published_condition: int):
+def remove_expired_articles(published_condition: int):
     expiring_data = timezone.now() - datetime.timedelta(days=published_condition)
     ArticleModel.objects.filter(published__lt=expiring_data).delete()
 
 #upload data to db
 @shared_task
-def upload_data(published_condition: int):
+def upload_articles(published_condition: int):
     sources = Source.objects.all()
     normalized_data = get_normalized_data(sources)
 
