@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin
 from users.forms import UserCreationForm, UserArticleDurationForm
 from users.mixins import GetContextDataMixin
 from django.contrib.auth import authenticate, login
@@ -98,7 +98,7 @@ class ProfileView(GetContextDataMixin, LoginRequiredMixin, TemplateView):
         return context
 
 
-class FavoriteArticlesView(LoginRequiredMixin, GetContextDataMixin, ListView):
+class FavoriteArticlesView(GetContextDataMixin, LoginRequiredMixin, ListView):
     model = ArticleModel
     template_name = "users/favorite.html"
     context_object_name = "articles"
