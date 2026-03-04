@@ -193,18 +193,44 @@ class UserSourceUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
         )
         return form
 
-    def form_valid(self, form):
-        user_source = form.save(commit=False)
+    def form_valid(self, form): 
+        if form.has_changed():
+            old_source = self.get_object().source
 
-        source, created = Source.objects.get_or_create(
-            url=form.cleaned_data['url'],
-            source_type=form.cleaned_data['source_type']
-        )
+            # Get user input
+            new_user_source = form.save(commit=False)
 
-        user_source.source = source
-        user_source.save()
+            if old_source != new_user_source.source:
+                # Get or create source same to user input
+                source, created = Source.objects.get_or_create(
+                    url=new_user_source.source.url,
+                    source_type=new_user_source.source.source_type
+                )
+
+                new_user_source.source = source
+
+                if UserSource.objects.filter(source=old_source).count() <= 1:
+                    old_source.delete()
+
+            new_user_source.save()
 
         return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+
+        if form.is_valid():
+            if UserSource.objects.filter(
+                usersettings=request.user.usersettings,
+                source__url=form.cleaned_data['url'],
+                source__source_type=form.cleaned_data['source_type']
+            ).exclude(id=self.object.id).exists():
+                form.add_error('url', "You already have this source with same: url, source_type, category")
+                return self.form_invalid(form)
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class CategoryCreateView(GetContextDataMixin, LoginRequiredMixin, CreateView):
@@ -215,18 +241,20 @@ class CategoryCreateView(GetContextDataMixin, LoginRequiredMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+
+        self.object = None
         
         if form.is_valid():
             usersettings = request.user.usersettings
-            
-            # Get or create category for user
-            self.object, created = self.model.objects.get_or_create(**form.cleaned_data)
 
             # Check if user try to create object and unique fields don't pass
             for field in self.fields:
                 if usersettings.categories.filter(**{field: form.cleaned_data[field]}).exists():
                     form.add_error(field, "You already have this object")
                     return self.form_invalid(form)
+                
+            # Get or create category for user
+            self.object, created = self.model.objects.get_or_create(**form.cleaned_data)
 
             # Add category
             usersettings.categories.add(self.object)
@@ -267,7 +295,7 @@ class CategoryUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
             # Add edited category to user
             usersettings.categories.add(updated_category)
 
-            # Update source using old category to new one
+            # Update category in user sources with edited category
             UserSource.objects.filter(category=self.object, usersettings=usersettings).update(category=updated_category)
 
             # Remove old category from user
