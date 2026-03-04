@@ -6,6 +6,7 @@ import datetime
 
 
 class UserCreationForm(UserCreationForm):
+    username = forms.CharField(min_length=2,max_length=50, required=True)
     email = forms.EmailField(required=True)
 
     class Meta:
