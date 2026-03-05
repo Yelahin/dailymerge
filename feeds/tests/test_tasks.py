@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock, patch
 class RemoveDataTaskTestCase(TestCase):
     def setUp(self):
         self.articles_count = 10
-        source = Source.objects.create(url="http://example.com/1/feed/", source_type="RSS")
+        source = Source.objects.create(url="http://example.com/1/feed/")
         
         for number in range(1, self.articles_count+1):
             ArticleModel.objects.create(
@@ -65,7 +65,7 @@ class UploadDataTaskTestCase(TestCase):
             }
         ]
         self.query = self.queries[0]
-        self.source = Source.objects.create(url="http://example.com/1/feed/", source_type="RSS")
+        self.source = Source.objects.create(url="http://example.com/1/feed/")
 
     def test_get_published_from_query(self):
         result = get_published_from_query(self.query)

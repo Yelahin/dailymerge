@@ -11,15 +11,7 @@ class ArticleCategoryModel(models.Model):
 
 
 class Source(models.Model):
-    class SourceType(models.TextChoices):
-        RSS = "RSS", "RSS"
-        API = "API", "API"
-
-    url = models.URLField(max_length=500)
-    source_type = models.CharField(max_length=10, choices=SourceType.choices)
-
-    class Meta:
-        unique_together = ('url', 'source_type')
+    url = models.URLField(max_length=500, unique=True)
 
 
 class ArticleModel(models.Model):

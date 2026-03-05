@@ -148,13 +148,13 @@ class UserSourceCreateView(GetContextDataMixin, LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         usersettings = self.request.user.usersettings
 
-        # Check if user have source with same url, source_type and category
+        # Check if user have source with same url and category
         if UserSource.objects.filter(
             usersettings=usersettings,
-            source=Source.objects.filter(url=form.cleaned_data['url'], source_type=form.cleaned_data['source_type']).first(),
+            source=Source.objects.filter(url=form.cleaned_data['url']).first(),
             category=form.cleaned_data['category']
         ).exists():
-            form.add_error('url', "You already have this source with same: url, source_type, category")
+            form.add_error('url', "You already have this source with same: url, category")
             return self.form_invalid(form)
 
         self.object = form.save()
@@ -187,7 +187,6 @@ class UserSourceUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
             usersettings=usersettings, 
             initial={
                 'url': object.source.url,
-                'source_type': object.source.source_type
             },
             **kwargs
         )
@@ -204,7 +203,6 @@ class UserSourceUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
                 # Get or create source same to user input
                 source, created = Source.objects.get_or_create(
                     url=new_user_source.source.url,
-                    source_type=new_user_source.source.source_type
                 )
 
                 new_user_source.source = source
@@ -224,9 +222,8 @@ class UserSourceUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
             if UserSource.objects.filter(
                 usersettings=request.user.usersettings,
                 source__url=form.cleaned_data['url'],
-                source__source_type=form.cleaned_data['source_type']
             ).exclude(id=self.object.id).exists():
-                form.add_error('url', "You already have this source with same: url, source_type, category")
+                form.add_error('url', "You already have this source with same: url category")
                 return self.form_invalid(form)
             return self.form_valid(form)
         else:

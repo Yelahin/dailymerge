@@ -34,7 +34,6 @@ class ArticleListViewTestCase(TestCase):
             # Create source
             source = Source.objects.create(
                 url=f"http://example.com/{number}/feed/",
-                source_type="RSS"
             )
 
             # Create UserSource object and set for user

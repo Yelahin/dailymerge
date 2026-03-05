@@ -4,11 +4,10 @@ from users.models import UserSource
 
 class SourceForm(forms.ModelForm):
     url = forms.URLField(max_length=500)
-    source_type = forms.ChoiceField(choices=Source.SourceType.choices)
 
     class Meta:
         model = UserSource
-        fields = ['category', 'params', 'active']
+        fields = ['category', 'active']
 
     def __init__(self, *args, **kwargs):
         # Add only users categories
@@ -27,7 +26,6 @@ class SourceForm(forms.ModelForm):
         # Get or create Source object
         source, created = Source.objects.get_or_create(
             url=self.cleaned_data['url'],
-            source_type=self.cleaned_data['source_type'],
         )
         # Set Source object for UserSource object and set the usersettings
         usersource.source = source

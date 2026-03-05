@@ -14,7 +14,6 @@ class UserSource(models.Model):
     source = models.ForeignKey(Source, on_delete=models.CASCADE)
     category = models.ForeignKey(ArticleCategoryModel, on_delete=models.CASCADE, related_name="sources")
     active = models.BooleanField(default=True)
-    params = models.JSONField(null=True, blank=True)
 
     class Meta:
         unique_together = ('usersettings', 'source', 'category')

@@ -60,10 +60,7 @@ def get_normalized_data(feeds: list[Source]) -> list[dict[str: any]]:
     """This function returns normalized data from feed urls"""
     result = []
     for feed in feeds:
-        if feed.source_type == Source.SourceType.RSS:
-            queryset = fetch_rss_entry(feed)
-        elif feed.source_type == Source.SourceType.API:
-            queryset = fetch_api_feeds(feed)
+        queryset = fetch_rss_entry(feed)
         result += get_queryset_attributes(queryset, feed)
     return result
 
@@ -127,14 +124,6 @@ def fetch_rss_entry(rss: Source) -> list:
     raw_data = feedparser.parse(rss.url)
     entries = raw_data.entries
     return entries
-
-def fetch_api_feeds(api: Source) -> list:
-    """This function fetchs data from API feeds"""
-    response = requests.get(api.url, params=api.params)
-    json = response.json()
-    articles = json['articles']
-    return articles
-
 
 #Image attributes functions
 

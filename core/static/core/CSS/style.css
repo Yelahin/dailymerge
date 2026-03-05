@@ -499,14 +499,12 @@ main {
 
 .profile-layout {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    /* Profile wider than sources */
+    grid-template-columns: repeat(3, 380px);
+    justify-content: center;
     gap: 2rem;
-    max-width: 1200px;
-    /* Increased width as requested */
+    max-width: 1400px;
     margin: 2rem auto;
     align-items: stretch;
-    /* Stretch items to same height */
     padding: 0 1rem;
 }
 
@@ -715,7 +713,14 @@ main {
     font-size: 0.9rem;
 }
 
-/* Responsive adjustment for small screens */
+/* Responsive adjustment for screens smaller than the 3-column fixed layout */
+@media (max-width: 1240px) {
+    .profile-layout {
+        grid-template-columns: repeat(auto-fit, 380px);
+        justify-content: center;
+    }
+}
+
 @media (max-width: 768px) {
     .profile-layout {
         grid-template-columns: 1fr;
@@ -724,6 +729,8 @@ main {
     .profile-card,
     .sources-card {
         width: 100%;
+        max-width: 380px;
+        margin: 0 auto;
         box-sizing: border-box;
     }
 }
@@ -1105,6 +1112,7 @@ main {
 .input-duration-small::-webkit-outer-spin-button,
 .input-duration-small::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 

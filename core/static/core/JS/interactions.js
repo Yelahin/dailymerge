@@ -11,29 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const sourceTypeSelect = document.getElementById('id_source_type');
-    const paramsField = document.getElementById('id_params');
 
-    if (sourceTypeSelect && paramsField) {
-        // Find the parent form-group to hide the whole row
-        const paramsGroup = paramsField.closest('.form-group');
-
-        function toggleParamsField() {
-            if (sourceTypeSelect.value === 'API') {
-                paramsGroup.style.display = 'flex';
-            } else {
-                paramsGroup.style.display = 'none';
-            }
-        }
-
-        // Initial check
-        toggleParamsField();
-
-        // Listen for changes
-        sourceTypeSelect.addEventListener('change', toggleParamsField);
-    }
-});
 
 function toggleFavorite(event, articleId) {
     event.preventDefault(); // Prevent opening the link

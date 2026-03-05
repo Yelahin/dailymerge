@@ -165,7 +165,6 @@ class ProfileViewTestCase(TestCase):
         # Create source
         self.source, created = Source.objects.get_or_create(
             url="http://example.com/feed/",
-            source_type="RSS"
         )
 
         # Set source 
@@ -305,7 +304,6 @@ class ToggleFavoriteViewTestCase(TestCase):
         # Create source
         source = Source.objects.create(
             url="http://example.com/feed/",
-            source_type="RSS"
         )
 
         # Create article
@@ -348,7 +346,6 @@ class FavoriteArticlesViewTestCase(TestCase):
         # Create source
         source = Source.objects.create(
             url="http://example.com/feed/",
-            source_type="RSS"
         )
 
         self.articles_amount = 5
@@ -472,7 +469,7 @@ class SourceCreateViewTestCase(TestCase):
         self.assertTemplateUsed(response, "users/source_create_form.html")
 
     def test_source_create_empty_form(self):
-        form_data = {"url": "", "source_type": ""}
+        form_data = {"url": ""}
         response = self.client.post(reverse("source_create"), data=form_data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Source.objects.all().exists())
@@ -480,32 +477,23 @@ class SourceCreateViewTestCase(TestCase):
 
     def test_source_create_valid_form(self):
         # Test 1: Create source with RSS type
-        form_data = {"url": "http://example.com/feed/", "source_type": "RSS", "category": self.category.pk}
+        form_data = {"url": "http://example.com/feed/", "category": self.category.pk}
         response = self.client.post(reverse("source_create"), data=form_data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Source.objects.filter(url="http://example.com/feed/").exists())
         self.assertTrue(UserSource.objects.filter(usersettings=self.user.usersettings, source__url="http://example.com/feed/").exists())
 
-        # Test 2: Create source with API type and params
-        form_data = {"url": "http://example.com/another-feed/", 
-                     "source_type": "API", 
-                     "params": json.dumps({"param1": "value1", "param2": "value2"}),
-                     "category": self.category.pk}
-        
-        response = self.client.post(reverse("source_create"), data=form_data)
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(Source.objects.filter(url="http://example.com/another-feed/").exists())
-        self.assertTrue(UserSource.objects.filter(usersettings=self.user.usersettings, source__url="http://example.com/another-feed/").exists())
+
 
     def test_source_create_duplicate_url(self):
         # Create source with url "http://example.com/feed/"
-        source = Source.objects.create(url="http://example.com/feed/", source_type="RSS")
+        source = Source.objects.create(url="http://example.com/feed/")
         UserSource.objects.create(usersettings=self.user.usersettings, source=source, category=self.category)
         self.assertEqual(Source.objects.filter(url="http://example.com/feed/").count(), 1)
         self.assertEqual(self.user.usersettings.sources.filter(url="http://example.com/feed/").count(), 1)
 
         # Try to create source with the same url
-        form_data = {"url": "http://example.com/feed/", "source_type": "RSS", "category": self.category.pk}
+        form_data = {"url": "http://example.com/feed/", "category": self.category.pk}
         response = self.client.post(reverse("source_create"), data=form_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Source.objects.filter(url="http://example.com/feed/").count(), 1)
@@ -582,7 +570,7 @@ class CategoryUpdateViewTestCase(TestCase):
 
     def test_category_update_change_category_for_user_sources(self):
         # Create source with category_1
-        source = Source.objects.create(url="http://example.com/feed/", source_type="RSS")
+        source = Source.objects.create(url="http://example.com/feed/")
         UserSource.objects.create(usersettings=self.user.usersettings, source=source, category=self.category)
         self.assertEqual(UserSource.objects.filter(usersettings=self.user.usersettings, source=source).count(), 1)
 
@@ -627,7 +615,7 @@ class SourceUpdateViewTestCase(TestCase):
         self.user.usersettings.categories.add(self.category)
 
         # Create source
-        source = Source.objects.create(url="http://example.com/feed/", source_type="RSS")
+        source = Source.objects.create(url="http://example.com/feed/")
         self.user_source = UserSource.objects.create(usersettings=self.user.usersettings, source=source, category=self.category)
 
     def test_source_update_template(self):
@@ -636,7 +624,7 @@ class SourceUpdateViewTestCase(TestCase):
         self.assertTemplateUsed(response, "users/source_update_form.html")
 
     def test_source_update_empty_form(self):
-        form_data = {"url": "", "source_type": "", "category": ""}
+        form_data = {"url": "", "category": ""}
         response = self.client.post(reverse("source_update", kwargs={"pk": self.user_source.pk}), data=form_data)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Source.objects.filter(pk=self.user_source.source.pk).exists())
@@ -645,7 +633,7 @@ class SourceUpdateViewTestCase(TestCase):
         self.assertEqual(UserSource.objects.count(), 1)
 
     def test_source_update_valid_form(self):
-        form_data = {"url": "http://example.com/updated-feed/", "source_type": "API", "category": self.category.pk, "params": json.dumps({"param1": "value1"})}
+        form_data = {"url": "http://example.com/updated-feed/", "category": self.category.pk}
         response = self.client.post(reverse("source_update", kwargs={"pk": self.user_source.pk}), data=form_data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Source.objects.filter(url="http://example.com/updated-feed/").exists())
@@ -655,13 +643,13 @@ class SourceUpdateViewTestCase(TestCase):
 
     def test_source_update_duplicate_url(self):
         # Create another source with url "http://example.com/another-feed/"
-        another_source = Source.objects.create(url="http://example.com/another-feed/", source_type="RSS")
+        another_source = Source.objects.create(url="http://example.com/another-feed/")
         UserSource.objects.create(usersettings=self.user.usersettings, source=another_source, category=self.category)
         self.assertEqual(Source.objects.filter(url="http://example.com/another-feed/").count(), 1)
         self.assertEqual(self.user.usersettings.sources.filter(url="http://example.com/another-feed/").count(), 1)
 
         # Try to update source with the same url
-        form_data = {"url": "http://example.com/another-feed/", "source_type": "RSS", "category": self.category.pk}
+        form_data = {"url": "http://example.com/another-feed/", "category": self.category.pk}
         response = self.client.post(reverse("source_update", kwargs={"pk": self.user_source.pk}), data=form_data)
         self.assertEqual(Source.objects.count(), 2)
         self.assertEqual(UserSource.objects.count(), 2)
