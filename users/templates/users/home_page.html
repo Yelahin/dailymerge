@@ -1,0 +1,26 @@
+{% extends "basic.html" %}
+{% load custom_tags %}
+{% block content %}
+{% load humanize %}
+<div class="news-container">
+    {% for article in articles %}
+    <div class="news-item">
+        <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer">
+            <div class="star-icon {% if article.id in favorite_article_ids %}active{% endif %}"
+                data-article-id="{{ article.id }}" onclick="toggleFavorite(event, '{{ article.id }}')">
+                ★
+            </div>
+            <img src="{{ article.image_url }}" alt="{{ article.title }}" loading="lazy">
+            <div class="news-content">
+                <div class="news-meta">
+                    <span class="news-date">{{ article.published|naturaltime }}</span>
+                    <span class="article-category">{{ source_category_map|get_category:article.source.id }}</span>
+                </div>
+                <strong>{{ article.title }}</strong>
+                <p>{{ article.summary|truncatechars:150 }}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

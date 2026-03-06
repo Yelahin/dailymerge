@@ -47,7 +47,7 @@ class ArticleListView(ListView):
                 queryset = qs.filter(source__usersource__category__slug=slug, source__usersource__usersettings=user.usersettings)
             # Return users favorite articles if there is no slug
             else:
-                query = user.usersettings.favorite_articles.all()
+                queryset = user.usersettings.favorite_articles.all()
 
         return queryset.order_by("-published").distinct()
 
@@ -58,17 +58,3 @@ class ArticleListView(ListView):
             context['categories'] = usersettings.categories.all()
             context['favorite_article_ids'] = list(usersettings.favorite_articles.values_list('id', flat=True))
         return context
-
-    def dispatch(self, request, *args, **kwargs):
-        # Redirect user to login page if user isn't logged in
-        if isinstance(self.request.user, AnonymousUser):
-            return redirect('login')
-        
-        # Redirect user to page with articles of chosen category
-        if self.kwargs.get('slug'):
-            return super().dispatch(request, *args, **kwargs)
-        
-        # Redirect logged user to page with favorite articles
-        else:
-            return redirect('favorite')
-    

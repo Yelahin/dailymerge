@@ -9,6 +9,8 @@ class LoginRequiredMixin(LoginRequiredMixin):
 class GetContextDataMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = self.request.user.usersettings.categories.all()
+        usersettings = self.request.user.usersettings
+        context['categories'] = usersettings.categories.all()
+        context['favorite_article_ids'] = list(usersettings.favorite_articles.values_list('id', flat=True))
         return context
     

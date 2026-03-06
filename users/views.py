@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
 from users.mixins import LoginRequiredMixin
@@ -12,6 +13,34 @@ from django.urls import reverse_lazy
 from users.models import UserSource, UserCategory
 
 # Create your views here.
+
+
+class HomePageListView(GetContextDataMixin, LoginRequiredMixin, ListView):
+    model = ArticleModel
+    context_object_name = "articles"
+    ordering = "published"
+    template_name = 'users/home_page.html'
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # Return users articles that active and pass expiring date
+        expiring_date = timezone.now() - user.usersettings.article_duration
+        queryset = ArticleModel.objects.filter(
+            source__usersource__usersettings=user.usersettings,
+            source__usersource__active=True,
+            published__gt=expiring_date,
+        ).order_by("-published").distinct()
+
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_sources = UserSource.objects.filter(usersettings=self.request.user.usersettings).select_related('category')
+        source_category_map = {user_source.source.id: user_source.category for user_source in user_sources}
+        context['source_category_map'] = source_category_map
+        return context
+
 
 class ProfileView(GetContextDataMixin, LoginRequiredMixin, TemplateView):
     template_name = 'users/profile.html'

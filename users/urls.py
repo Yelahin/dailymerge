@@ -1,8 +1,9 @@
 from django.urls import path
 from django.contrib.auth.views import LogoutView
-from users.views import ProfileView, SignUpView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView, UserSourceUpdateView, UserSourceCreateView, CategoryCreateView, CategoryUpdateView, FavoriteArticlesView, ToggleFavoriteView
+from users.views import HomePageListView, ProfileView, SignUpView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView, UserSourceUpdateView, UserSourceCreateView, CategoryCreateView, CategoryUpdateView, FavoriteArticlesView, ToggleFavoriteView
 
 urlpatterns = [
+    path("", HomePageListView.as_view(), name="home"),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("profile/source/create/", UserSourceCreateView.as_view(), name="source_create"),
     path("profile/source/update/<pk>/", UserSourceUpdateView.as_view(), name="source_update"),
