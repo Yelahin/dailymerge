@@ -1,26 +1,29 @@
 {% extends "basic.html" %}
 {% block content %}
 <div class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Add New Source</h2>
-        <form method="post" class="auth-form">
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                <small class="help-text">{{ field.help_text }}</small>
-                {% endif %}
-                {% if field.errors %}
-                <div class="error-text">{{ field.errors }}</div>
-                {% endif %}
-            </div>
-            {% endfor %}
-            <button type="submit" class="btn-primary">Add Source</button>
-            <a href="{% url 'profile' %}" class="btn-secondary"
-                style="text-align: center; display: block; margin-top: 1rem;">Cancel</a>
-        </form>
+    <div class="form-layout">
+        <div class="auth-card">
+            <h2>Add New Source</h2>
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                    <div class="error-text">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn-primary">Add Source</button>
+                <a href="{% url 'profile' %}" class="btn-secondary"
+                    style="text-align: center; display: block; margin-top: 1rem;">Cancel</a>
+            </form>
+        </div>
+        {% include "users/requirements_card.html" %}
     </div>
 </div>
 
