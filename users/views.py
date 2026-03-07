@@ -10,10 +10,10 @@ from django.contrib.auth.forms import PasswordChangeForm
 from feeds.models import Source, ArticleCategoryModel, ArticleModel
 from feeds.forms import SourceForm
 from django.urls import reverse_lazy
+from django.shortcuts import render
 from users.models import UserSource, UserCategory
 
 # Create your views here.
-
 
 class HomePageListView(GetContextDataMixin, LoginRequiredMixin, ListView):
     model = ArticleModel
@@ -166,7 +166,7 @@ class UserSourceCreateView(GetContextDataMixin, LoginRequiredMixin, CreateView):
     model = UserSource
     form_class = SourceForm
     template_name = "users/source_create_form.html"
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('pending')
 
     def get_form(self, form_class=None):
         """Pass usersettings to form class"""
@@ -194,7 +194,7 @@ class UserSourceUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
     model = UserSource
     form_class = SourceForm
     template_name = "users/source_update_form.html"
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('pending')
 
     def get_form(self, form_class=None):
         usersettings = self.request.user.usersettings
@@ -334,6 +334,10 @@ class CategoryUpdateView(GetContextDataMixin, LoginRequiredMixin, UpdateView):
         else:
             return self.form_invalid(form)
         
+
+class PendingView(GetContextDataMixin, LoginRequiredMixin, TemplateView):
+    template_name = "users/pending.html"
+
 
 class SignUpView(CreateView):
     form_class = UserCreationForm

@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LogoutView
-from users.views import HomePageListView, ProfileView, SignUpView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView, UserSourceUpdateView, UserSourceCreateView, CategoryCreateView, CategoryUpdateView, FavoriteArticlesView, ToggleFavoriteView
+from users.views import HomePageListView, ProfileView, PendingView, SignUpView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetCompleteView, PasswordResetConfirmView, LoginView, UserSourceUpdateView, UserSourceCreateView, CategoryCreateView, CategoryUpdateView, FavoriteArticlesView, ToggleFavoriteView
 
 urlpatterns = [
     path("", HomePageListView.as_view(), name="home"),
@@ -11,6 +11,7 @@ urlpatterns = [
     path("profile/category/update/<pk>", CategoryUpdateView.as_view(), name="category_update"),
     path("category/favorite/", FavoriteArticlesView.as_view(), name="favorite"),
     path("favorite/toggle/<pk>/", ToggleFavoriteView.as_view(), name="toggle_favorite"),
+    path("pending/", PendingView.as_view(), name="pending"),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("password_change/", PasswordChangeView.as_view(), name="password_change"),
