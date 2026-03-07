@@ -17,6 +17,12 @@
             </div>
         </a>
     </div>
+    {% empty %}
+    <div class="empty-state-container">
+        <div class="empty-state-icon">📰</div>
+        <h2>No articles found</h2>
+        <p>We couldn't find any articles for you right now. Try adjusting your sources or check back later!</p>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}

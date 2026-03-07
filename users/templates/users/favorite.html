@@ -22,7 +22,11 @@
         </a>
     </div>
     {% empty %}
-    <p id="no-favorites-msg">No favorite articles yet.</p>
+    <div class="empty-state-container">
+        <div class="empty-state-icon">★</div>
+        <h2>No favorites yet</h2>
+        <p>You haven't added any articles to your favorites. Click the star icon on any article to save it here!</p>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}

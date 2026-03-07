@@ -21,6 +21,12 @@
             </div>
         </a>
     </div>
+    {% empty %}
+    <div class="empty-state-container">
+        <div class="empty-state-icon">📰</div>
+        <h2>No articles found</h2>
+        <p>Your feed is currently empty. Add more sources or categories in your profile to see the latest news!</p>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
