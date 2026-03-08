@@ -1,16 +1,24 @@
 # DailyMerge
 
-![Demo](assets/home.png)
+![Demo](assets/main_page.png)
 
-**DailyMerge** is a Django-based news aggregator website that collects articles from multiple sources such as RSS feeds and external APIs. The data is normalized, stored in a database, and displayed on the main page while it remains relevant. Outdated articles are automatically removed to keep the news fresh.
+![Demo](assets/profile_page.png)
+
+![Demo](assets/source_form.png)
+
+**DailyMerge** is a Django-based news aggregator website that collects articles from RSS feeds. The data is normalized, stored in a database, and displayed on the main page while it remains relevant. Outdated articles are automatically removed to keep the news fresh.
 
 
 ## Main Features 
 
-- Aggregates news from multiple sources (RSS feeds and external APIs)
+- Aggregates news from RSS feeds
 - Scheduled background fetching and automatic removal of outdated articles
 - Admin panel for managing sources, categories, and articles
-- Article caching for improved performance
+- User registration and authentication
+- User profile for managing filters, categories, and sources
+- Shared objects optimization between users
+- Password management (reset and change password)
+- CRUD operations 
 - Category-based filtering
 - Asynchronous validation of article images
 
@@ -32,12 +40,14 @@ cd dailymerge
 
 ```
 DJANGO_SECRET=
-DJANGO_ALLOWED_HOSTS=localhost
+DJANGO_ALLOWED_HOSTS=127.0.0.1, localhost
 POSTGRES_DB=
 POSTGRES_USER=
 POSTGRES_PASSWORD=
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
 ```
 
 4. Start Docker Compose and create superuser
@@ -49,32 +59,6 @@ docker compose up --build -d
 ```sh
 docker exec -it django python manage.py createsuperuser
 ```
-
-5. Configure categories and sources
-
-Open the Django admin panel:
-
-```sh
-http://localhost:8080/admin/
-```
-
-Log in with the superuser account and:
-
-- Add categories
-
-- Add RSS feeds or API sources
-
-Each source must provide the following fields:
-
-- Title
-
-- Link/URL
-
-- Published date
-
-- Description / summary
-
-- Image URL (media_thumbnail, media_content, enclosure, or urlToImage)
 
 ## Built with
 
